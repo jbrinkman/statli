@@ -159,7 +159,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test section and status definition operations
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 10. Implement ReportService - Part 2: Generation
+- [x] 10. Implement ReportService - Part 2: Generation
   - [x] 10.1 Implement change detection algorithm
     - Implement detectChanges function
     - Compare current task state with last Task_History entry
@@ -230,7 +230,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test edge cases (empty sections, no tasks)
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 7.11, 7.12_
 
-- [~] 11. Checkpoint - Ensure all tests pass
+- [x] 11. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 12. Implement ReportService - Part 3: Finalization
