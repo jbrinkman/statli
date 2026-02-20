@@ -265,7 +265,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - _Requirements: 4.6, 4.7, 4.8, 8.10, 8.11, 8.12, 8.13_
 
 - [ ] 13. Implement ExportService
-  - [~] 13.1 Implement file export functionality
+  - [x] 13.1 Implement file export functionality
     - Implement ExportToFile function
     - Handle file path creation (including year subfolders)
     - Write markdown content to file
