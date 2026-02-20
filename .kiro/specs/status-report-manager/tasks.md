@@ -250,7 +250,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 8: Task History Capture Completeness**
     - **Validates: Requirements 4.6, 4.8, 8.11**
   
-  - [~] 12.4 Write property test for task history timestamp presence
+  - [x] 12.4 Write property test for task history timestamp presence
     - **Property 9: Task History Timestamp Presence**
     - **Validates: Requirements 4.7, 8.12**
   
