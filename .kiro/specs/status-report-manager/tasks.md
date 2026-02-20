@@ -258,7 +258,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 20: Snapshot Creation on Finalization**
     - **Validates: Requirements 8.10**
   
-  - [~] 12.6 Write unit tests for report finalization
+  - [x] 12.6 Write unit tests for report finalization
     - Test snapshot creation
     - Test task history capture
     - Test with various project states
