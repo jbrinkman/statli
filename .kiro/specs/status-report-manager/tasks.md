@@ -14,7 +14,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
   - Create directory structure (models, services, repository, components, views)
   - _Requirements: 9.1, 9.2, 10.1, 10.2, 10.7_
 
-- [ ] 2. Implement database schema and migrations
+- [x] 2. Implement database schema and migrations
   - [x] 2.1 Create SQLite schema with all tables
     - Implement projects, report_sections, status_definitions, tasks, subtasks, report_snapshots, task_history tables
     - Add indexes for performance
@@ -25,7 +25,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 21: Referential Integrity on Finalization**
     - **Validates: Requirements 8.13**
 
-- [ ] 3. Implement core data models
+- [x] 3. Implement core data models
   - [x] 3.1 Create Go structs for all entities
     - Project, Task, Subtask, ReportSection, StatusDefinition, TaskHistory, ReportSnapshot models
     - Add JSON tags for Wails bindings
@@ -35,53 +35,53 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test struct creation and field validation
     - _Requirements: 9.6_
 
-- [ ] 4. Implement repository layer
+- [x] 4. Implement repository layer
   - [x] 4.1 Create database connection and initialization
     - Implement db.go with SQLite connection pooling
     - Add database initialization on first launch
     - _Requirements: 9.1, 9.2, 9.3_
   
-  - [~] 4.2 Implement ProjectRepository
+  - [x] 4.2 Implement ProjectRepository
     - CRUD operations for projects
     - List active and archived projects
     - _Requirements: 1.1, 2.1, 2.2, 2.3, 2.4_
   
-  - [~] 4.3 Implement TaskRepository
+  - [x] 4.3 Implement TaskRepository
     - CRUD operations for tasks and subtasks
     - List tasks by section with ordering
     - Soft delete and restore operations
     - _Requirements: 3.1, 3.2, 3.18, 3.19, 3.20, 3.21, 3.22_
   
-  - [~] 4.4 Implement ReportRepository
+  - [x] 4.4 Implement ReportRepository
     - CRUD operations for report sections and status definitions
     - CRUD operations for report snapshots and task history
     - Query task history by snapshot
     - _Requirements: 4.6, 6.1, 6.2, 8.10, 8.11_
   
-  - [~] 4.5 Write unit tests for repository operations
+  - [x] 4.5 Write unit tests for repository operations
     - Test CRUD operations with in-memory SQLite
     - Test query methods
     - _Requirements: 9.1, 9.2_
 
-- [ ] 5. Implement template processing service
-  - [~] 5.1 Create template variable replacement logic
+- [x] 5. Implement template processing service
+  - [x] 5.1 Create template variable replacement logic
     - Implement RenderFilename and RenderReportTitle functions
     - Support all template variables: {project-name}, {YYYY-MM-DD}, {YYYY}, {MM}, {DD}
     - _Requirements: 1.2, 1.3, 1.7, 1.8, 1.9_
   
-  - [~] 5.2 Implement filename format validation
+  - [x] 5.2 Implement filename format validation
     - Validate against invalid filesystem characters
     - _Requirements: 1.10_
   
-  - [~] 5.3 Write property test for template variable replacement
+  - [x] 5.3 Write property test for template variable replacement
     - **Property 3: Template Variable Replacement Completeness**
     - **Validates: Requirements 1.7, 1.8, 1.9**
   
-  - [~] 5.4 Write property test for filename validation
+  - [x] 5.4 Write property test for filename validation
     - **Property 4: Filename Format Validation**
     - **Validates: Requirements 1.10**
   
-  - [~] 5.5 Write unit tests for template edge cases
+  - [x] 5.5 Write unit tests for template edge cases
     - Test with missing variables, special characters, empty templates
     - _Requirements: 1.7, 1.8, 1.9, 1.10_
 
