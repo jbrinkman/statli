@@ -142,7 +142,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test error handling
     - _Requirements: 3.1, 3.2, 3.18, 3.19, 3.20, 3.21, 3.22_
 
-- [ ] 9. Implement ReportService - Part 1: Configuration
+- [x] 9. Implement ReportService - Part 1: Configuration
   - [x] 9.1 Implement report section CRUD operations
     - CreateReportSection, UpdateReportSection, GetReportSection
     - ListReportSections, ReorderSections
@@ -160,7 +160,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 6.1, 6.2, 6.3, 6.4_
 
 - [ ] 10. Implement ReportService - Part 2: Generation
-  - [~] 10.1 Implement change detection algorithm
+  - [x] 10.1 Implement change detection algorithm
     - Implement detectChanges function
     - Compare current task state with last Task_History entry
     - Detect status and ECD changes only
