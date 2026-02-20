@@ -110,7 +110,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 8. Implement TaskService
-  - [~] 8.1 Implement task CRUD operations
+  - [x] 8.1 Implement task CRUD operations
     - CreateTask, UpdateTask, GetTask
     - ListTasksBySection, MoveTaskToSection, ReorderTasks
     - SoftDeleteTask, RestoreTask, ArchiveTask
