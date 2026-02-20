@@ -216,7 +216,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 16: ECD Change Rendering**
     - **Validates: Requirements 7.9**
   
-  - [~] 10.12 Write property test for report section ordering
+  - [x] 10.12 Write property test for report section ordering
     - **Property 17: Report Section Ordering**
     - **Validates: Requirements 7.12**
   
