@@ -254,7 +254,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 9: Task History Timestamp Presence**
     - **Validates: Requirements 4.7, 8.12**
   
-  - [~] 12.5 Write property test for snapshot creation on finalization
+  - [x] 12.5 Write property test for snapshot creation on finalization
     - **Property 20: Snapshot Creation on Finalization**
     - **Validates: Requirements 8.10**
   
