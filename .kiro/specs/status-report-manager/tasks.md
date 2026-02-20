@@ -136,14 +136,14 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 7: Soft Delete and Restore Round-Trip**
     - **Validates: Requirements 3.18, 3.19, 3.21, 3.22**
   
-  - [~] 8.6 Write unit tests for task service
+  - [x] 8.6 Write unit tests for task service
     - Test task and subtask operations
     - Test move and reorder operations
     - Test error handling
     - _Requirements: 3.1, 3.2, 3.18, 3.19, 3.20, 3.21, 3.22_
 
 - [ ] 9. Implement ReportService - Part 1: Configuration
-  - [~] 9.1 Implement report section CRUD operations
+  - [x] 9.1 Implement report section CRUD operations
     - CreateReportSection, UpdateReportSection, GetReportSection
     - ListReportSections, ReorderSections
     - Add structured logging with zap
