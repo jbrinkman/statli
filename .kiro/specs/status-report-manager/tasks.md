@@ -173,14 +173,14 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Render subtasks with proper indentation
     - _Requirements: 7.7, 7.8, 7.9_
   
-  - [~] 10.3 Implement status section rendering
+  - [x] 10.3 Implement status section rendering
     - Implement renderStatusSection function
     - Filter tasks by section
     - Apply change detection
     - Render as markdown
     - _Requirements: 7.6_
   
-  - [~] 10.4 Implement report generation
+  - [x] 10.4 Implement report generation
     - Implement GenerateReport function
     - Build recipients block, title, CSS, sections
     - Order sections by configured sequence
