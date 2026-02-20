@@ -128,11 +128,11 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 5: Task Name Validation**
     - **Validates: Requirements 3.1**
   
-  - [~] 8.4 Write property test for task section assignment validation
+  - [x] 8.4 Write property test for task section assignment validation
     - **Property 6: Task Section Assignment Validation**
     - **Validates: Requirements 3.2**
   
-  - [~] 8.5 Write property test for soft delete and restore round-trip
+  - [x] 8.5 Write property test for soft delete and restore round-trip
     - **Property 7: Soft Delete and Restore Round-Trip**
     - **Validates: Requirements 3.18, 3.19, 3.21, 3.22**
   
