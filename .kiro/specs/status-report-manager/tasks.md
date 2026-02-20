@@ -220,11 +220,11 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 17: Report Section Ordering**
     - **Validates: Requirements 7.12**
   
-  - [~] 10.13 Write property test for preview generation does not create history
+  - [x] 10.13 Write property test for preview generation does not create history
     - **Property 18: Preview Generation Does Not Create History**
     - **Validates: Requirements 8.1**
   
-  - [~] 10.14 Write unit tests for report generation
+  - [x] 10.14 Write unit tests for report generation
     - Test with various project configurations
     - Test with and without previous snapshots
     - Test edge cases (empty sections, no tasks)
