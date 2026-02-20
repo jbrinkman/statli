@@ -204,11 +204,11 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 13: Status Section Task Filtering**
     - **Validates: Requirements 7.6**
   
-  - [~] 10.9 Write property test for status badge HTML format
+  - [x] 10.9 Write property test for status badge HTML format
     - **Property 14: Status Badge HTML Format**
     - **Validates: Requirements 7.7**
   
-  - [~] 10.10 Write property test for status change rendering
+  - [x] 10.10 Write property test for status change rendering
     - **Property 15: Status Change Rendering**
     - **Validates: Requirements 7.8**
   
