@@ -21,22 +21,22 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Add foreign key constraints
     - _Requirements: 9.3, 9.4, 9.6_
   
-  - [~] 2.2 Write property test for database schema integrity
+  - [x] 2.2 Write property test for database schema integrity
     - **Property 21: Referential Integrity on Finalization**
     - **Validates: Requirements 8.13**
 
 - [ ] 3. Implement core data models
-  - [~] 3.1 Create Go structs for all entities
+  - [x] 3.1 Create Go structs for all entities
     - Project, Task, Subtask, ReportSection, StatusDefinition, TaskHistory, ReportSnapshot models
     - Add JSON tags for Wails bindings
     - _Requirements: 9.6_
   
-  - [~] 3.2 Write unit tests for model validation
+  - [x] 3.2 Write unit tests for model validation
     - Test struct creation and field validation
     - _Requirements: 9.6_
 
 - [ ] 4. Implement repository layer
-  - [~] 4.1 Create database connection and initialization
+  - [x] 4.1 Create database connection and initialization
     - Implement db.go with SQLite connection pooling
     - Add database initialization on first launch
     - _Requirements: 9.1, 9.2, 9.3_
