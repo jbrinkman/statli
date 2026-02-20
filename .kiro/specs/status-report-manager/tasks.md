@@ -212,7 +212,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 15: Status Change Rendering**
     - **Validates: Requirements 7.8**
   
-  - [~] 10.11 Write property test for ECD change rendering
+  - [x] 10.11 Write property test for ECD change rendering
     - **Property 16: ECD Change Rendering**
     - **Validates: Requirements 7.9**
   
