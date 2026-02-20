@@ -93,15 +93,15 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Add structured logging with zap
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.11, 2.1, 2.2, 2.3, 2.4_
   
-  - [~] 6.2 Write property test for project name validation
+  - [x] 6.2 Write property test for project name validation
     - **Property 1: Project Name Validation**
     - **Validates: Requirements 1.1**
   
-  - [~] 6.3 Write property test for year subfolder path construction
+  - [x] 6.3 Write property test for year subfolder path construction
     - **Property 2: Year Subfolder Path Construction**
     - **Validates: Requirements 1.6**
   
-  - [~] 6.4 Write unit tests for project service
+  - [x] 6.4 Write unit tests for project service
     - Test project creation, archiving, listing
     - Test error handling
     - _Requirements: 1.1, 2.1, 2.2, 2.3, 2.4_
