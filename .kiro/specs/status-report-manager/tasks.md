@@ -86,7 +86,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - _Requirements: 1.7, 1.8, 1.9, 1.10_
 
 - [ ] 6. Implement ProjectService
-  - [~] 6.1 Implement project CRUD operations
+  - [x] 6.1 Implement project CRUD operations
     - CreateProject, UpdateProject, GetProject
     - ListActiveProjects, ListArchivedProjects, ArchiveProject
     - Integrate template rendering and validation
@@ -473,19 +473,19 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - _Requirements: 1.1, 2.1, 3.1, 6.1, 7.1, 8.1, 8.10_
 
 - [ ] 23. Build and deployment
-  - [ ] 23.1 Configure Wails build
+  - [~] 23.1 Configure Wails build
     - Set up build configuration for Windows and macOS
     - Configure application metadata (name, version, icon)
     - _Requirements: 11.1, 11.2_
   
-  - [ ] 23.2 Test builds on both platforms
+  - [~] 23.2 Test builds on both platforms
     - Build for Windows
     - Build for macOS
     - Verify binary size < 50MB
     - Test on target platforms
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
   
-  - [ ] 23.3 Create README and documentation
+  - [~] 23.3 Create README and documentation
     - Installation instructions
     - Usage guide
     - Development setup
