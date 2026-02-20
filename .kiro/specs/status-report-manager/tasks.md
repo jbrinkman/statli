@@ -192,15 +192,15 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - **Property 10: Change Detection Accuracy**
     - **Validates: Requirements 4.9, 7.10, 8.15**
   
-  - [~] 10.6 Write property test for no change highlighting on non-tracked fields
+  - [x] 10.6 Write property test for no change highlighting on non-tracked fields
     - **Property 11: No Change Highlighting for Non-Tracked Fields**
     - **Validates: Requirements 4.10, 7.11**
   
-  - [~] 10.7 Write property test for report structure completeness
+  - [x] 10.7 Write property test for report structure completeness
     - **Property 12: Report Structure Completeness**
     - **Validates: Requirements 7.2, 7.3, 7.4, 7.5**
   
-  - [~] 10.8 Write property test for status section task filtering
+  - [x] 10.8 Write property test for status section task filtering
     - **Property 13: Status Section Task Filtering**
     - **Validates: Requirements 7.6**
   
