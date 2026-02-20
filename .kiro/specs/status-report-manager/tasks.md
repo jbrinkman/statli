@@ -234,7 +234,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 12. Implement ReportService - Part 3: Finalization
-  - [~] 12.1 Implement report finalization
+  - [x] 12.1 Implement report finalization
     - Implement FinalizeReport function
     - Create Report_Snapshot with markdown content and timestamp
     - Capture Task_History for all non-deleted, non-archived tasks and subtasks
@@ -242,11 +242,11 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Add structured logging with zap
     - _Requirements: 4.6, 4.7, 4.8, 8.10, 8.11, 8.12, 8.13_
   
-  - [~] 12.2 Implement snapshot retrieval
+  - [x] 12.2 Implement snapshot retrieval
     - GetReportSnapshot, ListReportSnapshots
     - _Requirements: 8.14_
   
-  - [~] 12.3 Write property test for task history capture completeness
+  - [x] 12.3 Write property test for task history capture completeness
     - **Property 8: Task History Capture Completeness**
     - **Validates: Requirements 4.6, 4.8, 8.11**
   
