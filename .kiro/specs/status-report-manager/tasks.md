@@ -149,13 +149,13 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Add structured logging with zap
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.9_
   
-  - [~] 9.2 Implement status definition CRUD operations
+  - [x] 9.2 Implement status definition CRUD operations
     - CreateStatusDefinition, UpdateStatusDefinition
     - ListStatusDefinitions
     - Add structured logging with zap
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
   
-  - [~] 9.3 Write unit tests for report configuration
+  - [x] 9.3 Write unit tests for report configuration
     - Test section and status definition operations
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 6.1, 6.2, 6.3, 6.4_
 
