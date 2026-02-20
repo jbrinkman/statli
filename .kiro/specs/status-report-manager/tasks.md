@@ -117,14 +117,14 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Add structured logging with zap
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.18, 3.21, 3.23_
   
-  - [~] 8.2 Implement subtask CRUD operations
+  - [x] 8.2 Implement subtask CRUD operations
     - CreateSubtask, UpdateSubtask, GetSubtask
     - ListSubtasksByTask
     - SoftDeleteSubtask, SoftDeleteAllSubtasks, RestoreSubtask
     - Add structured logging with zap
     - _Requirements: 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 3.16, 3.17, 3.19, 3.20, 3.22_
   
-  - [~] 8.3 Write property test for task name validation
+  - [x] 8.3 Write property test for task name validation
     - **Property 5: Task Name Validation**
     - **Validates: Requirements 3.1**
   
