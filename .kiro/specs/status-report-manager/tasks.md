@@ -272,28 +272,28 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Add structured logging with zap
     - _Requirements: 8.2, 8.4, 8.5, 8.6_
   
-  - [~] 13.2 Implement suggested filepath generation
+  - [x] 13.2 Implement suggested filepath generation
     - Implement GetSuggestedFilepath function
     - Use project's filename format template
     - Apply year subfolder logic if enabled
     - _Requirements: 1.6, 8.3, 8.4_
   
-  - [~] 13.3 Implement clipboard functionality
+  - [x] 13.3 Implement clipboard functionality
     - Implement CopyToClipboard function
     - _Requirements: 12.11_
   
-  - [~] 13.4 Write property test for file export round-trip
+  - [x] 13.4 Write property test for file export round-trip
     - **Property 19: File Export Round-Trip**
     - **Validates: Requirements 8.6**
   
-  - [~] 13.5 Write unit tests for export service
+  - [x] 13.5 Write unit tests for export service
     - Test file export to various paths
     - Test year subfolder creation
     - Test clipboard operations
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6, 12.11_
 
 - [ ] 14. Implement Wails application bindings
-  - [~] 14.1 Create Wails app struct and bindings
+  - [x] 14.1 Create Wails app struct and bindings
     - Expose ProjectService, TaskService, ReportService, ExportService to frontend
     - Initialize services with dependencies
     - Set up structured logging
