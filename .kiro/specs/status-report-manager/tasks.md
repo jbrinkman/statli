@@ -382,21 +382,21 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test user interactions
     - _Requirements: 12.1, 12.2, 12.3, 12.6_
 
-- [~] 18. Implement main views
-  - [~] 18.1 Create ProjectView
+- [x] 18. Implement main views
+  - [x] 18.1 Create ProjectView
     - Show project list
     - Handle project creation and selection
     - Navigate to TaskView on selection
     - _Requirements: 12.1, 12.2_
   
-  - [~] 18.2 Create TaskView
+  - [x] 18.2 Create TaskView
     - Show task list for selected project
     - Handle task and subtask CRUD operations
     - Show project configuration button
     - Show generate report button
     - _Requirements: 12.2, 12.3_
   
-  - [~] 18.3 Create ReportView
+  - [x] 18.3 Create ReportView
     - Show report generation interface
     - Display section toggles
     - Show report preview
@@ -404,26 +404,26 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Show loading states
     - _Requirements: 12.5, 12.6, 12.7, 12.8_
   
-  - [~] 18.4 Write unit tests for views
+  - [x] 18.4 Write unit tests for views
     - Test navigation
     - Test data flow
     - _Requirements: 12.1, 12.2, 12.5, 12.6_
 
 - [~] 19. Implement report configuration UI
-  - [~] 19.1 Create ReportSectionList component
+  - [x] 19.1 Create ReportSectionList component
     - Display report sections with order
     - Handle section creation, editing, deletion
     - Support drag-and-drop reordering
     - Show enable/disable toggles
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.9, 12.4_
   
-  - [~] 19.2 Create StatusDefinitionList component
+  - [x] 19.2 Create StatusDefinitionList component
     - Display status definitions with styles
     - Handle status creation, editing, deletion
     - Show style preview (color badges)
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 12.4_
   
-  - [~] 19.3 Write unit tests for configuration components
+  - [x] 19.3 Write unit tests for configuration components
     - Test CRUD operations
     - Test reordering
     - _Requirements: 5.1, 6.1, 12.4_
