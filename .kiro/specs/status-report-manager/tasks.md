@@ -409,7 +409,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test data flow
     - _Requirements: 12.1, 12.2, 12.5, 12.6_
 
-- [~] 19. Implement report configuration UI
+- [x] 19. Implement report configuration UI
   - [x] 19.1 Create ReportSectionList component
     - Display report sections with order
     - Handle section creation, editing, deletion
@@ -429,18 +429,18 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - _Requirements: 5.1, 6.1, 12.4_
 
 - [~] 20. Implement styling with UnoCSS
-  - [~] 20.1 Configure UnoCSS with design tokens
+  - [x] 20.1 Configure UnoCSS with design tokens
     - Set up colors, spacing, typography
     - Configure responsive breakpoints
     - _Requirements: 10.6, 12.9_
   
-  - [~] 20.2 Style all components
+  - [x] 20.2 Style all components
     - Apply consistent styling across application
     - Implement responsive layouts
     - Add loading states and error displays
     - _Requirements: 12.9, 12.10_
   
-  - [~] 20.3 Implement status badge CSS
+  - [x] 20.3 Implement status badge CSS
     - Create CSS classes for all status styles
     - Match design document specifications
     - _Requirements: 7.4, 7.7_
