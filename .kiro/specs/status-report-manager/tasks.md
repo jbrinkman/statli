@@ -85,7 +85,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test with missing variables, special characters, empty templates
     - _Requirements: 1.7, 1.8, 1.9, 1.10_
 
-- [ ] 6. Implement ProjectService
+- [x] 6. Implement ProjectService
   - [x] 6.1 Implement project CRUD operations
     - CreateProject, UpdateProject, GetProject
     - ListActiveProjects, ListArchivedProjects, ArchiveProject
@@ -109,7 +109,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
 - [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement TaskService
+- [x] 8. Implement TaskService
   - [x] 8.1 Implement task CRUD operations
     - CreateTask, UpdateTask, GetTask
     - ListTasksBySection, MoveTaskToSection, ReorderTasks
@@ -233,7 +233,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
 - [x] 11. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 12. Implement ReportService - Part 3: Finalization
+- [x] 12. Implement ReportService - Part 3: Finalization
   - [x] 12.1 Implement report finalization
     - Implement FinalizeReport function
     - Create Report_Snapshot with markdown content and timestamp
@@ -264,7 +264,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test with various project states
     - _Requirements: 4.6, 4.7, 4.8, 8.10, 8.11, 8.12, 8.13_
 
-- [ ] 13. Implement ExportService
+- [x] 13. Implement ExportService
   - [x] 13.1 Implement file export functionality
     - Implement ExportToFile function
     - Handle file path creation (including year subfolders)
@@ -292,46 +292,46 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test clipboard operations
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6, 12.11_
 
-- [ ] 14. Implement Wails application bindings
+- [x] 14. Implement Wails application bindings
   - [x] 14.1 Create Wails app struct and bindings
     - Expose ProjectService, TaskService, ReportService, ExportService to frontend
     - Initialize services with dependencies
     - Set up structured logging
     - _Requirements: 10.4_
   
-  - [~] 14.2 Write integration tests for Wails bindings
+  - [x] 14.2 Write integration tests for Wails bindings
     - Test frontend-backend communication
     - Test error propagation
     - _Requirements: 10.4_
 
-- [~] 15. Checkpoint - Ensure all tests pass
+- [x] 15. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 16. Implement frontend composables
-  - [~] 16.1 Create useProjects composable
+- [x] 16. Implement frontend composables
+  - [x] 16.1 Create useProjects composable
     - Implement project CRUD operations
     - Handle loading states and errors
     - _Requirements: 1.1, 2.1, 2.2, 2.3, 2.4_
   
-  - [~] 16.2 Create useTasks composable
+  - [x] 16.2 Create useTasks composable
     - Implement task and subtask CRUD operations
     - Handle move, reorder, soft delete, restore operations
     - Handle loading states and errors
     - _Requirements: 3.1, 3.2, 3.18, 3.19, 3.20, 3.21, 3.22_
   
-  - [~] 16.3 Create useReports composable
+  - [x] 16.3 Create useReports composable
     - Implement report generation, export, finalization
     - Handle report section and status definition operations
     - Handle loading states and errors
     - _Requirements: 6.1, 6.2, 7.1, 8.1, 8.2, 8.10_
   
-  - [~] 16.4 Write unit tests for composables
+  - [x] 16.4 Write unit tests for composables
     - Test with mocked backend calls
     - Test error handling
     - _Requirements: 1.1, 2.1, 3.1, 6.1, 7.1, 8.1_
 
-- [ ] 17. Implement core UI components
-  - [~] 17.1 Create ProjectList component
+- [~] 17. Implement core UI components
+  - [x] 17.1 Create ProjectList component
     - Display active and archived projects
     - Handle project selection
     - Show create project button
@@ -382,7 +382,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test user interactions
     - _Requirements: 12.1, 12.2, 12.3, 12.6_
 
-- [ ] 18. Implement main views
+- [~] 18. Implement main views
   - [~] 18.1 Create ProjectView
     - Show project list
     - Handle project creation and selection
@@ -409,7 +409,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test data flow
     - _Requirements: 12.1, 12.2, 12.5, 12.6_
 
-- [ ] 19. Implement report configuration UI
+- [~] 19. Implement report configuration UI
   - [~] 19.1 Create ReportSectionList component
     - Display report sections with order
     - Handle section creation, editing, deletion
@@ -428,7 +428,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test reordering
     - _Requirements: 5.1, 6.1, 12.4_
 
-- [ ] 20. Implement styling with UnoCSS
+- [~] 20. Implement styling with UnoCSS
   - [~] 20.1 Configure UnoCSS with design tokens
     - Set up colors, spacing, typography
     - Configure responsive breakpoints
@@ -448,7 +448,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
 - [~] 21. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 22. Integration and polish
+- [~] 22. Integration and polish
   - [~] 22.1 Wire all components together
     - Connect views with routing
     - Ensure data flows correctly
@@ -472,7 +472,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test error scenarios
     - _Requirements: 1.1, 2.1, 3.1, 6.1, 7.1, 8.1, 8.10_
 
-- [ ] 23. Build and deployment
+- [~] 23. Build and deployment
   - [~] 23.1 Configure Wails build
     - Set up build configuration for Windows and macOS
     - Configure application metadata (name, version, icon)
@@ -491,7 +491,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Development setup
     - _Requirements: 11.1, 11.2, 11.5_
 
-- [ ] 24. Final checkpoint - Ensure all tests pass
+- [~] 24. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
