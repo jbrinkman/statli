@@ -358,7 +358,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Validate inputs
     - _Requirements: 3.1, 3.2, 12.3, 12.12, 12.13, 12.14_
   
-  - [~] 17.5 Create SubtaskForm component
+  - [x] 17.5 Create SubtaskForm component
     - Form for creating/editing subtasks
     - Include all fields (name, status, ECD, URL, notes)
     - Auto-resize notes field
