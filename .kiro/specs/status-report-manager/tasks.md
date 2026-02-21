@@ -428,7 +428,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Test reordering
     - _Requirements: 5.1, 6.1, 12.4_
 
-- [~] 20. Implement styling with UnoCSS
+- [x] 20. Implement styling with UnoCSS
   - [x] 20.1 Configure UnoCSS with design tokens
     - Set up colors, spacing, typography
     - Configure responsive breakpoints
@@ -449,7 +449,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
   - Ensure all tests pass, ask the user if questions arise.
 
 - [~] 22. Integration and polish
-  - [~] 22.1 Wire all components together
+  - [x] 22.1 Wire all components together
     - Connect views with routing
     - Ensure data flows correctly
     - Handle navigation between views
