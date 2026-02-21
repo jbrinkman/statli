@@ -377,7 +377,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Render status badges with CSS
     - _Requirements: 7.13, 12.6_
   
-  - [~] 17.8 Write unit tests for components
+  - [x] 17.8 Write unit tests for components
     - Test rendering with sample data
     - Test user interactions
     - _Requirements: 12.1, 12.2, 12.3, 12.6_
