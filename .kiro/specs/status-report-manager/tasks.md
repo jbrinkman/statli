@@ -337,13 +337,13 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Show create project button
     - _Requirements: 12.1, 12.2_
   
-  - [~] 17.2 Create ProjectForm component
+  - [x] 17.2 Create ProjectForm component
     - Form for creating/editing projects
     - Include all configuration fields (name, formats, directory, year subfolders, recipients)
     - Validate inputs
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 12.3_
   
-  - [~] 17.3 Create TaskList component
+  - [x] 17.3 Create TaskList component
     - Display tasks organized by status sections
     - Show task details (name, status, ECD, notes)
     - Show subtasks with indentation
