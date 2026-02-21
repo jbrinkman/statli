@@ -365,13 +365,13 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Validate inputs
     - _Requirements: 3.10, 3.11, 12.3, 12.12, 12.13, 12.14_
   
-  - [~] 17.6 Create MarkdownEditor component
+  - [x] 17.6 Create MarkdownEditor component
     - Textarea with markdown support
     - Auto-resize to fit content
     - For prose section editing
     - _Requirements: 6.6, 12.12, 12.13, 12.14_
   
-  - [~] 17.7 Create ReportPreview component
+  - [x] 17.7 Create ReportPreview component
     - Display rendered markdown report
     - Show recipients, title, sections
     - Render status badges with CSS
