@@ -351,7 +351,7 @@ This implementation plan breaks down the Status Report Manager into incremental,
     - Support drag-and-drop reordering
     - _Requirements: 12.2, 12.3_
   
-  - [~] 17.4 Create TaskForm component
+  - [x] 17.4 Create TaskForm component
     - Form for creating/editing tasks
     - Include all fields (name, section, status, ECD, URL, notes)
     - Auto-resize notes field
