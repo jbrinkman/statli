@@ -15,7 +15,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
   - Set up full-viewport layout (100vw x 100vh) with header and content area using flexbox
   - _Requirements: 1.1, 1.3, 9.1, 9.2_
 
-- [ ] 2. Implement section data loading and state management
+- [x] 2. Implement section data loading and state management
   - [x] 2.1 Create data loading logic using useReports composable
     - Load section data based on route parameter `id`
     - Store original section data for change detection
@@ -31,7 +31,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Create reactive refs for UI state: loading, saving, error, showConfirmDialog
     - _Requirements: 1.4, 4.1, 4.2_
 
-- [ ] 3. Build header section with metadata controls
+- [~] 3. Build header section with metadata controls
   - [x] 3.1 Implement section name input field
     - Create editable text input bound to sectionName
     - Add proper ARIA labels for accessibility
@@ -50,7 +50,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Disable save button during save operation
     - _Requirements: 1.5, 6.6_
 
-- [ ] 4. Implement dynamic content area with component switching
+- [~] 4. Implement dynamic content area with component switching
   - [x] 4.1 Create conditional rendering for prose vs status sections
     - Use v-if to render MonacoEditor for prose sections
     - Use v-if to render task list for status sections
@@ -70,7 +70,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 3: Section Type Change Component Switch**
     - **Validates: Requirements 4.4, 4.5**
 
-- [ ] 5. Integrate MonacoEditor for prose sections
+- [~] 5. Integrate MonacoEditor for prose sections
   - [x] 5.1 Add MonacoEditor component with proper configuration
     - Import and use existing MonacoEditor.vue component
     - Configure for markdown language by default
@@ -108,7 +108,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
 - [~] 7. Checkpoint - Ensure basic editing works
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement change detection mechanism
+- [~] 8. Implement change detection mechanism
   - [~] 8.1 Create hasUnsavedChanges method
     - Compare current name with original name
     - Compare current type with original type
@@ -120,7 +120,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 5: Change Detection Accuracy**
     - **Validates: Requirements 2.5, 3.5, 4.6, 8.8**
 
-- [ ] 9. Implement localStorage auto-save for prose sections
+- [~] 9. Implement localStorage auto-save for prose sections
   - [~] 9.1 Create localStorage key generation method
     - Generate unique key using section ID: `section-draft-${sectionId}`
     - _Requirements: 5.6_
@@ -169,7 +169,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Call stopAutoSave on unmount
     - _Requirements: 5.1, 10.3_
 
-- [ ] 10. Implement save operation
+- [~] 10. Implement save operation
   - [~] 10.1 Create handleSave method
     - Set saving state to true
     - Call useReports update method with all changes
@@ -195,7 +195,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 16: Save Button Disabled During Save**
     - **Validates: Requirements 6.6**
 
-- [ ] 11. Implement cancel operation with unsaved changes protection
+- [~] 11. Implement cancel operation with unsaved changes protection
   - [~] 11.1 Create handleCancel method
     - Check for unsaved changes using hasUnsavedChanges
     - Show confirmation dialog if changes exist
@@ -228,7 +228,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 22: Keep Editing Confirmation Action**
     - **Validates: Requirements 8.6**
 
-- [ ] 12. Implement keyboard shortcuts
+- [~] 12. Implement keyboard shortcuts
   - [~] 12.1 Create handleKeyDown method
     - Handle Ctrl+S (Cmd+S on Mac) for save
     - Handle Escape for cancel
@@ -248,7 +248,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 18: Keyboard Shortcut Cancel**
     - **Validates: Requirements 7.2**
 
-- [ ] 13. Implement navigation guard for unsaved changes
+- [~] 13. Implement navigation guard for unsaved changes
   - [~] 13.1 Add beforeRouteLeave navigation guard
     - Check for unsaved changes
     - Show confirmation dialog if changes exist
@@ -263,7 +263,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
 - [~] 14. Checkpoint - Ensure all core functionality works
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. Add styling and accessibility
+- [~] 15. Add styling and accessibility
   - [~] 15.1 Apply consistent styling following TaskView.vue pattern
     - Full viewport layout with flexbox
     - Header with fixed height
@@ -278,7 +278,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Semantic HTML structure
     - _Requirements: 10.5_
 
-- [ ] 16. Add error handling and edge cases
+- [~] 16. Add error handling and edge cases
   - [~] 16.1 Handle backend API errors
     - Display user-friendly error messages
     - Log detailed errors to console
@@ -298,7 +298,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Disable save button if validation fails
     - _Requirements: 4.1_
 
-- [ ] 17. Integration and wiring
+- [~] 17. Integration and wiring
   - [~] 17.1 Update navigation triggers to use new route
     - Update section edit buttons/links to navigate to `/section/:id`
     - Ensure proper section ID is passed in route
