@@ -248,15 +248,15 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 18: Keyboard Shortcut Cancel**
     - **Validates: Requirements 7.2**
 
-- [~] 13. Implement navigation guard for unsaved changes
-  - [ ] 13.1 Add beforeRouteLeave navigation guard
+- [x] 13. Implement navigation guard for unsaved changes
+  - [x] 13.1 Add beforeRouteLeave navigation guard
     - Check for unsaved changes
     - Show confirmation dialog if changes exist
     - Allow navigation if no changes or user confirms discard
     - Block navigation if user chooses "Keep Editing"
     - _Requirements: 8.3, 9.4_
   
-  - [ ] 13.2 Write property test for navigation guard confirmation
+  - [x] 13.2 Write property test for navigation guard confirmation
     - **Property 20: Navigation Guard Confirmation**
     - **Validates: Requirements 8.3, 9.4**
 

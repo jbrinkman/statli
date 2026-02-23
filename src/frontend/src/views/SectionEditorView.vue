@@ -122,6 +122,9 @@ const statusDefinitions = ref<StatusDefinition[]>([]);
 // Auto-save state
 const autoSaveIntervalId = ref<number | null>(null);
 
+// Navigation guard state
+const pendingNavigation = ref<(() => void) | null>(null);
+
 // Computed property to wrap the current section in an array for TaskList
 const sectionsForTaskList = computed(() => {
     if (!section.value) return [];
@@ -223,7 +226,15 @@ const handleCancel = () => {
 // Confirm discard changes
 const confirmDiscard = () => {
     showConfirmDialog.value = false;
-    emit('navigate-back');
+
+    // If there's a pending navigation, allow it
+    if (pendingNavigation.value) {
+        pendingNavigation.value();
+        pendingNavigation.value = null;
+    } else {
+        // Otherwise, navigate back (from cancel button)
+        emit('navigate-back');
+    }
 };
 
 // Handle content change from MonacoEditor
@@ -404,12 +415,24 @@ const handleSelectSubtask = (subtask: Subtask) => {
 onMounted(async () => {
     await loadSection(props.sectionId);
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 });
 
 onUnmounted(() => {
     stopAutoSave();
     window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('beforeunload', handleBeforeUnload);
 });
+
+// Browser navigation guard (for browser back button, refresh, etc.)
+const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    if (hasUnsavedChanges()) {
+        // Standard way to trigger browser confirmation dialog
+        event.preventDefault();
+        event.returnValue = '';
+        return '';
+    }
+};
 </script>
 
 <style scoped>
