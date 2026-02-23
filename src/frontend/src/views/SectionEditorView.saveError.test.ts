@@ -123,6 +123,7 @@ describe("SectionEditorView - Save Error Handling Property Tests", () => {
             errorMessage: string,
           ) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0);
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();
@@ -187,6 +188,7 @@ describe("SectionEditorView - Save Error Handling Property Tests", () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0);
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();
@@ -315,6 +317,7 @@ describe("SectionEditorView - Save Error Handling Property Tests", () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0);
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();
@@ -385,6 +388,7 @@ describe("SectionEditorView - Save Error Handling Property Tests", () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0);
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();

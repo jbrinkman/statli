@@ -298,13 +298,13 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Disable save button if validation fails
     - _Requirements: 4.1_
 
-- [ ] 17. Integration and wiring
+- [x] 17. Integration and wiring
   - [x] 17.1 Update navigation triggers to use new route
     - Update section edit buttons/links to navigate to `/section/:id`
     - Ensure proper section ID is passed in route
     - _Requirements: 9.1_
   
-  - [ ] 17.2 Test full user flow end-to-end
+  - [x] 17.2 Test full user flow end-to-end
     - Navigate to section editor from section list
     - Edit section metadata and content
     - Save changes and verify persistence
@@ -313,7 +313,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Test auto-save and draft restoration
     - _Requirements: All_
 
-- [ ] 18. Final checkpoint - Ensure all tests pass
+- [x] 18. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

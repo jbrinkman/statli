@@ -279,6 +279,7 @@ describe("SectionEditorView - Save Button Disabled Property Tests", () => {
           fc.string({ maxLength: 5000 }),
           async (originalSection: ReportSection, newContent: string) => {
             fc.pre(newContent !== originalSection.content);
+            fc.pre(originalSection.name.trim().length > 0); // Skip sections with invalid names
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();

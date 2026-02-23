@@ -119,8 +119,9 @@ describe("SectionEditorView - Save Persistence Property Tests", () => {
           // Generate a different name
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
-            // Ensure the new name is actually different
+            // Ensure the new name is actually different and not whitespace-only
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0);
 
             // Setup: Mock the backend
             mockGetReportSection.mockResolvedValue(originalSection);
