@@ -3,7 +3,7 @@
     <!-- Header with project info and actions -->
     <div class="header">
       <div class="header-left">
-        <button @click="$emit('navigate-back')" class="btn-back" aria-label="Navigate back to projects">
+        <button @click="$emit('navigate-to-projects')" class="btn-back" aria-label="Navigate back to projects">
           ← Back to Projects
         </button>
         <h1 class="project-name">{{ project?.name || 'Loading...' }}</h1>
@@ -194,7 +194,7 @@ const props = defineProps<Props>();
 
 // Emits
 const emit = defineEmits<{
-  'navigate-back': [];
+  'navigate-to-projects': [];
   'navigate-to-report': [project: Project];
   'project-updated': [project: Project];
 }>();
