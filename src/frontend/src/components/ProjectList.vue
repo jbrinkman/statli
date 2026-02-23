@@ -3,13 +3,15 @@
     <!-- Header -->
     <div class="header">
       <h2 class="title">Projects</h2>
-      <button 
-        @click="$emit('create')" 
-        class="btn-create"
-        aria-label="Create new project (Ctrl+N)"
-      >
-        Create Project
-      </button>
+      <div class="header-actions">
+        <button v-if="selectedProjectId" @click="handleEditStylesheet" class="btn-edit-stylesheet"
+          aria-label="Edit master stylesheet for selected project">
+          Edit Stylesheet
+        </button>
+        <button @click="$emit('create')" class="btn-create" aria-label="Create new project (Ctrl+N)">
+          Create Project
+        </button>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -23,25 +25,12 @@
       <div v-if="activeProjects.length === 0" class="empty-state" role="status">
         No active projects. Create one to get started.
       </div>
-      <div 
-        v-else 
-        class="project-items" 
-        role="list" 
-        aria-label="Active projects"
-      >
-        <button
-          v-for="project in activeProjects"
-          :key="project.id"
-          @click="$emit('select', project)"
-          @keydown.enter="$emit('select', project)"
-          @keydown.space.prevent="$emit('select', project)"
-          class="project-item"
-          :class="{ selected: selectedProjectId === project.id }"
-          role="listitem"
+      <div v-else class="project-items" role="list" aria-label="Active projects">
+        <button v-for="project in activeProjects" :key="project.id" @click="$emit('select', project)"
+          @keydown.enter="$emit('select', project)" @keydown.space.prevent="$emit('select', project)"
+          class="project-item" :class="{ selected: selectedProjectId === project.id }" role="listitem"
           :aria-label="`Select project ${project.name}, created ${formatDate(project.created_at)}`"
-          :aria-current="selectedProjectId === project.id ? 'true' : undefined"
-          :data-project-id="project.id"
-        >
+          :aria-current="selectedProjectId === project.id ? 'true' : undefined" :data-project-id="project.id">
           <div class="project-name">{{ project.name }}</div>
           <div class="project-meta">
             Created: {{ formatDate(project.created_at) }}
@@ -56,24 +45,12 @@
       <div v-if="archivedProjects.length === 0" class="empty-state" role="status">
         No archived projects.
       </div>
-      <div 
-        v-else 
-        class="project-items" 
-        role="list" 
-        aria-label="Archived projects"
-      >
-        <button
-          v-for="project in archivedProjects"
-          :key="project.id"
-          @click="$emit('select', project)"
-          @keydown.enter="$emit('select', project)"
-          @keydown.space.prevent="$emit('select', project)"
-          class="project-item archived"
-          :class="{ selected: selectedProjectId === project.id }"
-          role="listitem"
+      <div v-else class="project-items" role="list" aria-label="Archived projects">
+        <button v-for="project in archivedProjects" :key="project.id" @click="$emit('select', project)"
+          @keydown.enter="$emit('select', project)" @keydown.space.prevent="$emit('select', project)"
+          class="project-item archived" :class="{ selected: selectedProjectId === project.id }" role="listitem"
           :aria-label="`Select archived project ${project.name}, archived ${formatDate(project.updated_at)}`"
-          :aria-current="selectedProjectId === project.id ? 'true' : undefined"
-        >
+          :aria-current="selectedProjectId === project.id ? 'true' : undefined">
           <div class="project-name">{{ project.name }}</div>
           <div class="project-meta">
             Archived: {{ formatDate(project.updated_at) }}
@@ -83,13 +60,8 @@
     </div>
 
     <!-- Toggle Archived -->
-    <button
-      v-if="!loading"
-      @click="toggleArchived"
-      class="btn-toggle-archived"
-      :aria-label="`${showArchived ? 'Hide' : 'Show'} archived projects`"
-      :aria-expanded="showArchived"
-    >
+    <button v-if="!loading" @click="toggleArchived" class="btn-toggle-archived"
+      :aria-label="`${showArchived ? 'Hide' : 'Show'} archived projects`" :aria-expanded="showArchived">
       {{ showArchived ? 'Hide' : 'Show' }} Archived Projects
     </button>
   </div>
@@ -116,9 +88,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // Emits
-defineEmits<{
+const emit = defineEmits<{
   create: [];
   select: [project: Project];
+  editStylesheet: [project: Project];
 }>();
 
 // Local state
@@ -132,6 +105,16 @@ const toggleArchived = () => {
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString();
+};
+
+const handleEditStylesheet = () => {
+  // Find the selected project
+  const selectedProject = props.activeProjects.find(p => p.id === props.selectedProjectId)
+    || props.archivedProjects.find(p => p.id === props.selectedProjectId);
+
+  if (selectedProject) {
+    emit('editStylesheet', selectedProject);
+  }
 };
 </script>
 
@@ -181,10 +164,15 @@ const formatDate = (dateString: string): string => {
   }
 }
 
-.btn-create {
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-create,
+.btn-edit-stylesheet {
   padding: 0.5rem 1rem;
-  background-color: #1a73e8;
-  color: white;
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -194,12 +182,31 @@ const formatDate = (dateString: string): string => {
   white-space: nowrap;
 }
 
+.btn-create {
+  background-color: #1a73e8;
+  color: white;
+}
+
 .btn-create:hover {
   background-color: #1557b0;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 .btn-create:active {
+  transform: scale(0.98);
+}
+
+.btn-edit-stylesheet {
+  background-color: #34a853;
+  color: white;
+}
+
+.btn-edit-stylesheet:hover {
+  background-color: #2d8e47;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit-stylesheet:active {
   transform: scale(0.98);
 }
 
@@ -224,7 +231,9 @@ const formatDate = (dateString: string): string => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .error {

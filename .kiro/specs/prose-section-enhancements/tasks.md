@@ -198,22 +198,22 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Test updating stylesheet refreshes rendered sections
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 5.4_
 
-- [ ] 12. Implement stylesheet editor access point
-  - [~] 12.1 Add stylesheet editor to ProjectView or create SettingsView
+- [x] 12. Implement stylesheet editor access point
+  - [x] 12.1 Add stylesheet editor to ProjectView or create SettingsView
     - Add "Edit Stylesheet" button or menu item
     - Integrate StylesheetEditor component
     - Handle opening/closing editor
     - Refresh report view after stylesheet save
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
   
-  - [~] 12.2 Write property test for stylesheet updates propagation
+  - [x] 12.2 Write property test for stylesheet updates propagation
     - **Property 11: Stylesheet Updates Propagate to Rendered Sections**
     - **Validates: Requirements 5.4**
     - Update master stylesheet
     - Verify all prose sections reflect new styles on next render
     - Run 100 iterations minimum
   
-  - [~] 12.3 Write unit tests for stylesheet editor integration
+  - [x] 12.3 Write unit tests for stylesheet editor integration
     - Test opening stylesheet editor loads current CSS
     - Test saving stylesheet updates project
     - Test canceling stylesheet editor discards changes

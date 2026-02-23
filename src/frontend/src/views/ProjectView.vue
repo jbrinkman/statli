@@ -10,8 +10,12 @@
     <div v-else class="list-container">
       <ProjectList :active-projects="activeProjects" :archived-projects="archivedProjects" :loading="loading"
         :error="error" :selected-project-id="selectedProjectId" @create="handleCreateProject"
-        @select="handleSelectProject" />
+        @select="handleSelectProject" @edit-stylesheet="handleEditStylesheet" />
     </div>
+
+    <!-- Stylesheet Editor Modal -->
+    <StylesheetEditor v-if="selectedProjectId" :project-id="selectedProjectId" :is-open="showStylesheetEditor"
+      @save="handleStylesheetSave" @cancel="handleStylesheetCancel" />
   </div>
 </template>
 
@@ -19,6 +23,7 @@
 import { ref, onMounted } from 'vue';
 import ProjectList from '../components/ProjectList.vue';
 import ProjectForm from '../components/ProjectForm.vue';
+import StylesheetEditor from '../components/StylesheetEditor.vue';
 import { useProjects, type Project } from '../composables/useProjects';
 import { useKeyboardShortcuts } from '../composables/useKeyboardShortcuts';
 
@@ -43,6 +48,7 @@ const {
 const showForm = ref(false);
 const editingProject = ref<Project | null>(null);
 const selectedProjectId = ref<number | null>(null);
+const showStylesheetEditor = ref(false);
 
 // Load projects on mount
 onMounted(async () => {
@@ -86,6 +92,24 @@ const handleProjectSubmit = async (projectData: Omit<Project, 'id' | 'created_at
 const handleFormCancel = () => {
   showForm.value = false;
   editingProject.value = null;
+};
+
+// Handle edit stylesheet
+const handleEditStylesheet = (project: Project) => {
+  selectedProjectId.value = project.id;
+  showStylesheetEditor.value = true;
+};
+
+// Handle stylesheet save
+const handleStylesheetSave = () => {
+  showStylesheetEditor.value = false;
+  // Note: The StylesheetEditor component handles the actual save to backend
+  // We could emit an event here if we need to refresh the report view
+};
+
+// Handle stylesheet cancel
+const handleStylesheetCancel = () => {
+  showStylesheetEditor.value = false;
 };
 
 // Keyboard shortcuts
