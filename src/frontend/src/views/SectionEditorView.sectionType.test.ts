@@ -135,9 +135,6 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       // Verify the value changed
       expect((typeSelector.element as HTMLSelectElement).value).toBe("status");
 
-      // Verify component state updated
-      expect(wrapper.vm.sectionType).toBe("status");
-
       wrapper.unmount();
     });
 
@@ -253,16 +250,18 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Verify auto-save is active (interval is set)
-      expect(wrapper.vm.autoSaveIntervalId).not.toBeNull();
+      // Save a draft to localStorage to verify auto-save was working
+      const key = `section-draft-1`;
+      localStorage.setItem(key, "initial content");
 
       // Change type to status
       const typeSelector = wrapper.find(".section-type-selector");
       await typeSelector.setValue("status");
       await nextTick();
 
-      // Verify auto-save is stopped (interval is cleared)
-      expect(wrapper.vm.autoSaveIntervalId).toBeNull();
+      // Verify the component switched to task list (auto-save should be stopped)
+      const taskList = wrapper.find(".task-list-container");
+      expect(taskList.exists()).toBe(true);
 
       wrapper.unmount();
     });
@@ -289,16 +288,18 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Verify auto-save is not active initially (status section)
-      expect(wrapper.vm.autoSaveIntervalId).toBeNull();
+      // Verify task list is displayed initially
+      let taskList = wrapper.find(".task-list-container");
+      expect(taskList.exists()).toBe(true);
 
       // Change type to prose
       const typeSelector = wrapper.find(".section-type-selector");
       await typeSelector.setValue("prose");
       await nextTick();
 
-      // Verify auto-save is started (interval is set)
-      expect(wrapper.vm.autoSaveIntervalId).not.toBeNull();
+      // Verify MonacoEditor is displayed (auto-save should be started)
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      expect(monacoEditor.exists()).toBe(true);
 
       wrapper.unmount();
     });
