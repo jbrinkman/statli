@@ -7,7 +7,8 @@
                     ← Back
                 </button>
                 <input v-model="sectionName" type="text" class="section-name-input" placeholder="Section name"
-                    aria-label="Section name" />
+                    aria-label="Section name" aria-invalid="!isValid" />
+                <span v-if="validationError" class="validation-error" role="alert">{{ validationError }}</span>
                 <select v-model="sectionType" class="section-type-selector" aria-label="Section type">
                     <option value="prose">Prose</option>
                     <option value="status">Status</option>
@@ -17,7 +18,7 @@
                 <button @click="handleCancel" class="btn-cancel" aria-label="Cancel editing">
                     Cancel
                 </button>
-                <button @click="handleSave" class="btn-save" :disabled="saving" aria-label="Save changes">
+                <button @click="handleSave" class="btn-save" :disabled="saving || !isValid" aria-label="Save changes">
                     {{ saving ? 'Saving...' : 'Save' }}
                 </button>
             </div>
@@ -125,6 +126,24 @@ const isLocalStorageAvailable = ref(true);
 
 // Navigation guard state
 const pendingNavigation = ref<(() => void) | null>(null);
+
+// Validation
+const validationError = ref<string | null>(null);
+
+const isValid = computed(() => {
+    // Don't validate while loading
+    if (loading.value) {
+        validationError.value = null;
+        return true;
+    }
+
+    if (!sectionName.value || sectionName.value.trim() === '') {
+        validationError.value = 'Section name is required';
+        return false;
+    }
+    validationError.value = null;
+    return true;
+});
 
 // Computed property to wrap the current section in an array for TaskList
 const sectionsForTaskList = computed(() => {
@@ -521,6 +540,16 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     outline: none;
     border-color: #1a73e8;
     box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.section-name-input[aria-invalid="true"] {
+    border-color: #d93025;
+}
+
+.validation-error {
+    color: #d93025;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
 }
 
 .section-type-selector {
