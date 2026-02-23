@@ -169,8 +169,8 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Call stopAutoSave on unmount
     - _Requirements: 5.1, 10.3_
 
-- [~] 10. Implement save operation
-  - [~] 10.1 Create handleSave method
+- [-] 10. Implement save operation
+  - [x] 10.1 Create handleSave method
     - Set saving state to true
     - Call useReports update method with all changes
     - Clear localStorage draft on success
@@ -179,15 +179,15 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Set saving state to false
     - _Requirements: 6.1, 6.3, 6.5, 6.6_
   
-  - [~] 10.2 Write property test for save persists all changes
+  - [-] 10.2 Write property test for save persists all changes
     - **Property 11: Save Persists All Changes**
     - **Validates: Requirements 6.1**
   
-  - [~] 10.3 Write property test for successful save navigation
+  - [x] 10.3 Write property test for successful save navigation
     - **Property 13: Successful Save Navigation**
     - **Validates: Requirements 6.3, 9.3**
   
-  - [~] 10.4 Write property test for save error handling
+  - [-] 10.4 Write property test for save error handling
     - **Property 15: Save Error Handling**
     - **Validates: Requirements 6.5**
   
