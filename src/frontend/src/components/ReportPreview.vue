@@ -37,13 +37,15 @@
       <component :is="'style'" v-html="report.CSS"></component>
 
       <!-- Report Sections -->
-      <div
-        v-for="(section, index) in report.Sections"
-        :key="index"
-        class="report-section"
-      >
+      <div v-for="(section, index) in report.Sections" :key="index" class="report-section">
         <h2 class="section-title">{{ section.Name }}</h2>
-        <div class="section-content" v-html="renderMarkdown(section.Content)"></div>
+
+        <!-- Use RenderedProseSection for prose sections -->
+        <RenderedProseSection v-if="section.Type === 'prose'" :section="getSectionData(section.Name)"
+          :stylesheet="props.stylesheet" />
+
+        <!-- Use simple markdown rendering for status sections -->
+        <div v-else class="section-content" v-html="renderMarkdown(section.Content)"></div>
       </div>
     </div>
 
@@ -56,49 +58,77 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { GeneratedReport } from '../composables/useReports';
+import type { GeneratedReport, ReportSection } from '../composables/useReports';
+import RenderedProseSection from './RenderedProseSection.vue';
 
 // Props
 interface Props {
   report: GeneratedReport | null;
   loading?: boolean;
   error?: string | null;
+  stylesheet?: string;
+  reportSections?: ReportSection[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   error: null,
+  stylesheet: '',
+  reportSections: () => [],
 });
 
 // Methods
+const getSectionData = (sectionName: string): any => {
+  // Find the matching report section by name
+  const matchingSection = props.reportSections.find(s => s.name === sectionName);
+
+  // If found, return it; otherwise create a minimal section object
+  if (matchingSection) {
+    return matchingSection;
+  }
+
+  // Fallback: create a minimal section object for rendering
+  return {
+    id: 0,
+    project_id: 0,
+    name: sectionName,
+    type: 'prose',
+    content: '',
+    order: 0,
+    is_enabled: true,
+    created_at: '',
+    updated_at: '',
+  };
+};
+
 const renderMarkdown = (content: string): string => {
   if (!content) return '';
-  
+
   // Simple markdown to HTML conversion
   // This handles the basic markdown features used in the reports
   let html = content;
-  
+
   // Convert markdown links: [text](url) -> <a href="url">text</a>
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-  
+
   // Convert strikethrough: ~~text~~ -> <del>text</del>
   html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
-  
+
   // Convert bold: **text** -> <strong>text</strong>
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  
+
   // Convert italic: *text* -> <em>text</em>
   html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  
+
   // Convert line breaks to <br> and preserve paragraph structure
   html = html.replace(/\n\n/g, '</p><p>');
   html = html.replace(/\n/g, '<br>');
-  
+
   // Wrap in paragraph tags if not already wrapped
   if (!html.startsWith('<p>')) {
     html = '<p>' + html + '</p>';
   }
-  
+
   return html;
 };
 </script>

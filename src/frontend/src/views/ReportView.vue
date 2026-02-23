@@ -3,41 +3,22 @@
     <!-- Header with navigation and actions -->
     <div class="header">
       <div class="header-left">
-        <button 
-          @click="$emit('navigate-back')" 
-          class="btn-back"
-          aria-label="Navigate back to tasks"
-        >
+        <button @click="$emit('navigate-back')" class="btn-back" aria-label="Navigate back to tasks">
           ← Back to Tasks
         </button>
         <h1 class="project-name">{{ project?.name || 'Loading...' }} - Report</h1>
       </div>
       <div class="header-right">
-        <button
-          @click="handleCopyToClipboard"
-          :disabled="!generatedReport || loading"
-          class="btn-copy"
-          aria-label="Copy report to clipboard (Ctrl+Shift+C)"
-          :aria-disabled="!generatedReport || loading"
-        >
+        <button @click="handleCopyToClipboard" :disabled="!generatedReport || loading" class="btn-copy"
+          aria-label="Copy report to clipboard (Ctrl+Shift+C)" :aria-disabled="!generatedReport || loading">
           📋 Copy to Clipboard
         </button>
-        <button
-          @click="handleExport"
-          :disabled="!generatedReport || loading"
-          class="btn-export"
-          aria-label="Export report to file (Ctrl+S)"
-          :aria-disabled="!generatedReport || loading"
-        >
+        <button @click="handleExport" :disabled="!generatedReport || loading" class="btn-export"
+          aria-label="Export report to file (Ctrl+S)" :aria-disabled="!generatedReport || loading">
           💾 Export
         </button>
-        <button
-          @click="handleFinalize"
-          :disabled="!generatedReport || loading"
-          class="btn-finalize"
-          aria-label="Finalize report and capture audit trail (Ctrl+F)"
-          :aria-disabled="!generatedReport || loading"
-        >
+        <button @click="handleFinalize" :disabled="!generatedReport || loading" class="btn-finalize"
+          aria-label="Finalize report and capture audit trail (Ctrl+F)" :aria-disabled="!generatedReport || loading">
           ✓ Finalize
         </button>
       </div>
@@ -49,13 +30,8 @@
       <div class="left-panel" role="complementary" aria-label="Report configuration">
         <div class="panel-header">
           <h2>Report Sections</h2>
-          <button 
-            @click="handleGenerate" 
-            :disabled="loading" 
-            class="btn-generate"
-            aria-label="Generate report preview (Ctrl+G)"
-            :aria-disabled="loading"
-          >
+          <button @click="handleGenerate" :disabled="loading" class="btn-generate"
+            aria-label="Generate report preview (Ctrl+G)" :aria-disabled="loading">
             {{ loading ? 'Generating...' : '🔄 Generate Report' }}
           </button>
         </div>
@@ -63,30 +39,15 @@
         <!-- Date Selector -->
         <div class="date-selector">
           <label for="report-date">Report Date:</label>
-          <input
-            id="report-date"
-            v-model="reportDate"
-            type="date"
-            class="date-input"
-            aria-label="Select report date"
-          />
+          <input id="report-date" v-model="reportDate" type="date" class="date-input" aria-label="Select report date" />
         </div>
 
         <!-- Section Toggles -->
         <div class="section-toggles" role="group" aria-label="Report section toggles">
-          <div
-            v-for="section in reportSections"
-            :key="section.id"
-            class="section-toggle"
-          >
+          <div v-for="section in reportSections" :key="section.id" class="section-toggle">
             <label class="toggle-label">
-              <input
-                type="checkbox"
-                v-model="section.is_enabled"
-                @change="handleSectionToggle(section)"
-                class="toggle-checkbox"
-                :aria-label="`Toggle ${section.name} section`"
-              />
+              <input type="checkbox" v-model="section.is_enabled" @change="handleSectionToggle(section)"
+                class="toggle-checkbox" :aria-label="`Toggle ${section.name} section`" />
               <span class="toggle-text">{{ section.name }}</span>
               <span class="toggle-type" aria-label="Section type">{{ section.type }}</span>
             </label>
@@ -106,11 +67,8 @@
 
       <!-- Right Panel: Report Preview -->
       <div class="right-panel" role="main" aria-label="Report preview">
-        <ReportPreview
-          :report="generatedReport"
-          :loading="loading"
-          :error="error"
-        />
+        <ReportPreview :report="generatedReport" :loading="loading" :error="error" :stylesheet="masterStylesheet"
+          :report-sections="reportSections" />
       </div>
     </div>
   </div>
@@ -154,10 +112,25 @@ const {
 // Local state
 const reportDate = ref(new Date().toISOString().split('T')[0]); // Today's date in YYYY-MM-DD format
 const successMessage = ref<string | null>(null);
+const masterStylesheet = ref<string>('');
+
+// Load master stylesheet
+const loadMasterStylesheet = async () => {
+  try {
+    const app = (window as any).go?.main?.App;
+    if (app && typeof app.GetProjectStylesheet === 'function') {
+      masterStylesheet.value = await app.GetProjectStylesheet(props.project.id);
+    }
+  } catch (err: any) {
+    console.error('Failed to load master stylesheet:', err);
+    // Don't set error state, just use empty stylesheet as fallback
+  }
+};
 
 // Load report sections on mount
 onMounted(async () => {
   await loadReportSections(props.project.id);
+  await loadMasterStylesheet();
 });
 
 // Handle section toggle
