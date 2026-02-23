@@ -78,7 +78,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Handle localStorage errors gracefully
     - _Requirements: 1.3, 6.1, 6.2_
   
-  - [~] 5.3 Write unit tests for ProseEditorModal
+  - [x] 5.3 Write unit tests for ProseEditorModal
     - Test modal renders full-screen when opened
     - Test save button emits save event with content
     - Test cancel button emits cancel event
