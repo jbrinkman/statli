@@ -105,7 +105,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 23: Task Display Completeness**
     - **Validates: Requirements 3.2**
 
-- [~] 7. Checkpoint - Ensure basic editing works
+- [x] 7. Checkpoint - Ensure basic editing works
   - Ensure all tests pass, ask the user if questions arise.
 
 - [~] 8. Implement change detection mechanism
