@@ -37,15 +37,20 @@ vi.mock("../composables/useTasks", () => ({
   }),
 }));
 
+// Create shared mock functions that will be reused across all calls
+const mockUpdateReportSection = vi.fn().mockResolvedValue(undefined);
+const mockLoadReportSections = vi.fn().mockResolvedValue(undefined);
+const mockLoadStatusDefinitions = vi.fn().mockResolvedValue(undefined);
+
 vi.mock("../composables/useReports", () => ({
   useReports: () => ({
     reportSections: { value: [] },
     statusDefinitions: { value: [] },
     loading: { value: false },
     error: { value: null },
-    loadReportSections: vi.fn().mockResolvedValue(undefined),
-    loadStatusDefinitions: vi.fn().mockResolvedValue(undefined),
-    updateReportSection: vi.fn().mockResolvedValue(undefined),
+    loadReportSections: mockLoadReportSections,
+    loadStatusDefinitions: mockLoadStatusDefinitions,
+    updateReportSection: mockUpdateReportSection,
   }),
 }));
 
@@ -166,7 +171,7 @@ describe("TaskView", () => {
     expect(generateButton.text()).toContain("Generate Report");
   });
 
-  it("renders TaskList component when not loading", async () => {
+  it("renders section-centric view when not loading", async () => {
     const wrapper = mount(TaskView, {
       props: {
         project: mockProject,
@@ -185,8 +190,9 @@ describe("TaskView", () => {
     await wrapper.vm.$nextTick();
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    // TaskList should be rendered (stubbed)
-    expect(wrapper.html()).toContain("task-list-stub");
+    // Section-centric view should be rendered
+    expect(wrapper.html()).toContain("sections-view");
+    expect(wrapper.html()).toContain("Report Sections");
   });
 
   it("shows loading state initially", () => {
@@ -459,11 +465,6 @@ describe("TaskView", () => {
      * the input and store it without modification or rejection.
      */
     it("accepts and stores markdown and HTML without modification", async () => {
-      // Create a spy on the mocked updateReportSection
-      const { useReports } = await import("../composables/useReports");
-      const mockUseReports = useReports();
-      const updateSpy = vi.spyOn(mockUseReports, "updateReportSection");
-
       await fc.assert(
         fc.asyncProperty(
           fc.oneof(
@@ -495,11 +496,8 @@ describe("TaskView", () => {
             ),
           ),
           async (content) => {
-            // Mock updateReportSection to capture the content
-            const mockUpdateReportSection = vi
-              .fn()
-              .mockResolvedValue(undefined);
-            const mockLoadReportSections = vi.fn().mockResolvedValue(undefined);
+            // Clear all mocks before each iteration
+            vi.clearAllMocks();
 
             const mockProseSection = {
               id: 1,
@@ -530,10 +528,6 @@ describe("TaskView", () => {
 
             // Simulate opening the editor and saving content
             const vm = wrapper.vm as any;
-
-            // Override the composable methods with our mocks
-            vm.updateReportSection = mockUpdateReportSection;
-            vm.loadReportSections = mockLoadReportSections;
 
             vm.editingProseSection = mockProseSection;
             vm.showProseEditor = true;
