@@ -502,4 +502,131 @@ describe("ProseEditorModal", () => {
       expect(monacoEditor.props("modelValue")).toBe("Initial content");
     });
   });
+
+  describe("Error handling", () => {
+    it("handles localStorage full error gracefully", async () => {
+      // Mock localStorage.setItem to throw QuotaExceededError
+      const originalSetItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = vi.fn(() => {
+        throw new DOMException("QuotaExceededError");
+      });
+
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      monacoEditor.vm.$emit("update:modelValue", "Content that won't save");
+      await nextTick();
+
+      // Fast-forward time by 30 seconds to trigger auto-save
+      vi.advanceTimersByTime(30000);
+      await nextTick();
+
+      // Editor should still be functional despite auto-save failure
+      const saveButton = wrapper.find(".btn-save");
+      expect(saveButton.exists()).toBe(true);
+
+      // Restore original setItem
+      Storage.prototype.setItem = originalSetItem;
+    });
+
+    it("handles localStorage unavailable gracefully", async () => {
+      // Mock localStorage to be null
+      const originalLocalStorage = global.localStorage;
+      Object.defineProperty(global, "localStorage", {
+        value: null,
+        writable: true,
+      });
+
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      // Editor should still render and function
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      expect(monacoEditor.exists()).toBe(true);
+
+      // Restore localStorage
+      Object.defineProperty(global, "localStorage", {
+        value: originalLocalStorage,
+        writable: true,
+      });
+    });
+
+    it("handles empty section content without errors", async () => {
+      const emptySection = { ...mockSection, content: "" };
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: emptySection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      expect(monacoEditor.props("modelValue")).toBe("");
+
+      // Should be able to save empty content
+      const saveButton = wrapper.find(".btn-save");
+      await saveButton.trigger("click");
+      await nextTick();
+
+      expect(wrapper.emitted("save")).toBeTruthy();
+      expect(wrapper.emitted("save")?.[0]).toEqual([""]);
+    });
+
+    it("handles very long content without errors", async () => {
+      const longContent = "a".repeat(150000); // 150KB of content
+      const longSection = { ...mockSection, content: longContent };
+
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: longSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      expect(monacoEditor.props("modelValue")).toBe(longContent);
+
+      // Should be able to save long content
+      const saveButton = wrapper.find(".btn-save");
+      await saveButton.trigger("click");
+      await nextTick();
+
+      expect(wrapper.emitted("save")).toBeTruthy();
+      expect(wrapper.emitted("save")?.[0]).toEqual([longContent]);
+    });
+
+    it("handles special characters in content", async () => {
+      const specialContent = "Special: <>&\"'`\n\t\r\u0000\u{1F600}\u{1F4A9}";
+      const specialSection = { ...mockSection, content: specialContent };
+
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: specialSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      expect(monacoEditor.props("modelValue")).toBe(specialContent);
+    });
+  });
 });

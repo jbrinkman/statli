@@ -691,4 +691,230 @@ describe("StylesheetEditor", () => {
       },
     );
   });
+
+  describe("Error Handling and Edge Cases", () => {
+    it("handles backend unavailable gracefully", async () => {
+      // Remove the Wails runtime
+      (window as any).go = undefined;
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      // Component should still render without crashing
+      expect(wrapper.find(".stylesheet-editor-modal").exists()).toBe(true);
+
+      // Editor should be present but may show error or empty state
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      expect(monacoEditor.exists()).toBe(true);
+
+      // Restore Wails runtime
+      (window as any).go = {
+        main: {
+          App: {
+            GetProjectStylesheet: mockGetProjectStylesheet,
+            UpdateProjectStylesheet: mockUpdateProjectStylesheet,
+          },
+        },
+      };
+    });
+
+    it("handles empty CSS stylesheet", async () => {
+      mockGetProjectStylesheet.mockResolvedValue("");
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      expect(monacoEditor.props("modelValue")).toBe("");
+
+      // Should be able to save empty stylesheet
+      await wrapper.find(".btn-save").trigger("click");
+      await nextTick();
+
+      expect(mockUpdateProjectStylesheet).toHaveBeenCalledWith(1, "");
+    });
+
+    it("handles very long CSS content", async () => {
+      const longCSS = ".class { color: red; }\n".repeat(5000);
+      mockGetProjectStylesheet.mockResolvedValue(longCSS);
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      expect(monacoEditor.props("modelValue")).toBe(longCSS);
+    });
+
+    it("handles special characters in CSS", async () => {
+      const specialCSS = `.prose-content::before { content: "\\00a0\\2022\\00a0"; }`;
+      mockGetProjectStylesheet.mockResolvedValue("");
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      await monacoEditor.vm.$emit("update:modelValue", specialCSS);
+      await nextTick();
+
+      expect(wrapper.find(".validation-errors").exists()).toBe(false);
+    });
+
+    it("handles unicode in CSS", async () => {
+      const unicodeCSS = `.prose-content::before { content: "你好 🌍"; }`;
+      mockGetProjectStylesheet.mockResolvedValue("");
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      await monacoEditor.vm.$emit("update:modelValue", unicodeCSS);
+      await nextTick();
+
+      expect(wrapper.find(".validation-errors").exists()).toBe(false);
+    });
+
+    it("handles CSS with comments", async () => {
+      const cssWithComments = `
+        /* Main styles */
+        .prose-content {
+          color: red; /* Primary color */
+        }
+        // This is not a valid CSS comment but should not break
+      `;
+      mockGetProjectStylesheet.mockResolvedValue("");
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      await monacoEditor.vm.$emit("update:modelValue", cssWithComments);
+      await nextTick();
+
+      // Should accept CSS with comments
+      expect(wrapper.find(".validation-errors").exists()).toBe(false);
+    });
+
+    it("handles multiple validation errors", async () => {
+      const invalidCSS = `.prose-content { color: red; .nested { color: blue;`;
+      mockGetProjectStylesheet.mockResolvedValue("");
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      await monacoEditor.vm.$emit("update:modelValue", invalidCSS);
+      await nextTick();
+
+      expect(wrapper.find(".validation-errors").exists()).toBe(true);
+      const saveButton = wrapper.find(".btn-save");
+      expect(saveButton.attributes("disabled")).toBeDefined();
+    });
+
+    it("handles rapid content changes", async () => {
+      mockGetProjectStylesheet.mockResolvedValue("");
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+
+      // Simulate rapid typing
+      for (let i = 0; i < 10; i++) {
+        await monacoEditor.vm.$emit(
+          "update:modelValue",
+          `.class${i} { color: red; }`,
+        );
+      }
+      await nextTick();
+
+      // Should handle all updates without errors
+      expect(wrapper.exists()).toBe(true);
+    });
+
+    it("handles save error and allows retry", async () => {
+      mockGetProjectStylesheet.mockResolvedValue("");
+      mockUpdateProjectStylesheet.mockRejectedValue(new Error("Network error"));
+
+      const wrapper = mount(StylesheetEditor, {
+        props: {
+          projectId: 1,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
+      await monacoEditor.vm.$emit("update:modelValue", ".test { color: red; }");
+      await nextTick();
+
+      // Save attempt fails
+      await wrapper.find(".btn-save").trigger("click");
+      await nextTick();
+
+      // Error message should be displayed
+      expect(wrapper.find(".error-message").exists()).toBe(true);
+
+      // Save button should still be enabled for retry
+      const saveButton = wrapper.find(".btn-save");
+      expect(saveButton.exists()).toBe(true);
+    });
+  });
 });

@@ -245,3 +245,168 @@ describe("RenderedProseSection - Unit Tests", () => {
     expect(proseContent.exists()).toBe(true);
   });
 });
+
+describe("RenderedProseSection - Error Handling Tests", () => {
+  it("handles rendering error gracefully", async () => {
+    // Create content that might cause issues
+    const problematicContent = "\u0000\u0001\u0002";
+    const section = createMockSection(problematicContent);
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "",
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // Should not crash, either renders or shows error
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("handles stylesheet loading error by using empty stylesheet", async () => {
+    const markdown = "# Test";
+    const section = createMockSection(markdown);
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "", // Empty stylesheet simulates loading error fallback
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // Should still render content
+    const proseContent = wrapper.find(".prose-content");
+    expect(proseContent.exists()).toBe(true);
+  });
+
+  it("handles invalid stylesheet gracefully", async () => {
+    const markdown = "# Test";
+    const section = createMockSection(markdown);
+    const invalidStylesheet = "this is not valid css {{{";
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: invalidStylesheet,
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // Should still render content even with invalid CSS
+    const proseContent = wrapper.find(".prose-content");
+    expect(proseContent.exists()).toBe(true);
+
+    // Invalid CSS is still injected (browser handles it)
+    const styleElement = wrapper.find("style");
+    expect(styleElement.exists()).toBe(true);
+  });
+
+  it("sanitizes dangerous HTML content", async () => {
+    // Test with actual HTML that should be sanitized
+    // Script tags and event handlers should be removed
+    const dangerousContent = `<script>alert('XSS')</script><p>Safe content</p>`;
+    const section = createMockSection(dangerousContent);
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "",
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const proseContent = wrapper.find(".prose-content");
+    const html = proseContent.html();
+
+    // Script tag should be removed by DOMPurify
+    expect(html).not.toContain("<script>");
+    // Safe content should remain
+    expect(html).toContain("Safe content");
+  });
+
+  it("handles very long markdown content", async () => {
+    const longMarkdown = "# Heading\n\n" + "paragraph text. ".repeat(10000);
+    const section = createMockSection(longMarkdown);
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "",
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const proseContent = wrapper.find(".prose-content");
+    expect(proseContent.exists()).toBe(true);
+    expect(proseContent.html()).toContain("<h1>");
+  });
+
+  it("handles markdown with only whitespace", async () => {
+    const whitespaceContent = "   \n\n\t\t\n   ";
+    const section = createMockSection(whitespaceContent);
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "",
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // Should show empty content message
+    const emptyContent = wrapper.find(".empty-content");
+    expect(emptyContent.exists()).toBe(true);
+  });
+
+  it("handles null or undefined content gracefully", async () => {
+    const section = createMockSection("");
+    // Simulate null content
+    section.content = null as any;
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "",
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // Should show empty content message
+    const emptyContent = wrapper.find(".empty-content");
+    expect(emptyContent.exists()).toBe(true);
+  });
+
+  it("handles unicode and emoji in markdown", async () => {
+    const unicodeContent = "# 你好世界 🌍\n\nمرحبا بك 🎉\n\n**Привет** 👋";
+    const section = createMockSection(unicodeContent);
+
+    const wrapper = mount(RenderedProseSection, {
+      props: {
+        section,
+        stylesheet: "",
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const proseContent = wrapper.find(".prose-content");
+    expect(proseContent.exists()).toBe(true);
+
+    const html = proseContent.html();
+    expect(html).toContain("你好世界");
+    expect(html).toContain("🌍");
+    expect(html).toContain("مرحبا بك");
+    expect(html).toContain("🎉");
+    expect(html).toContain("Привет");
+    expect(html).toContain("👋");
+  });
+});

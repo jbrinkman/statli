@@ -251,8 +251,8 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Verify syntax highlighting updates within 100ms
     - Run 100 iterations minimum
 
-- [ ] 14. Add error handling and edge case tests
-  - [~] 14.1 Write unit tests for error conditions
+- [x] 14. Add error handling and edge case tests
+  - [x] 14.1 Write unit tests for error conditions
     - Test failed section content load
     - Test failed section save
     - Test auto-save failure (localStorage full)
@@ -265,7 +265,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Test database error
     - _Requirements: All_
   
-  - [~] 14.2 Write unit tests for edge cases
+  - [x] 14.2 Write unit tests for edge cases
     - Test empty markdown content
     - Test very long markdown content (> 100KB)
     - Test markdown with only whitespace
