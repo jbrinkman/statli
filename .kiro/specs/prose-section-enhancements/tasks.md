@@ -53,7 +53,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Support markdown, html, and css language modes
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 5.5_
   
-  - [~] 4.2 Write unit tests for MonacoEditor component
+  - [x] 4.2 Write unit tests for MonacoEditor component
     - Test component renders with correct language mode
     - Test v-model binding updates on content change
     - Test readonly mode disables editing
