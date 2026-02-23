@@ -228,27 +228,27 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 22: Keep Editing Confirmation Action**
     - **Validates: Requirements 8.6**
 
-- [ ] 12. Implement keyboard shortcuts
-  - [ ] 12.1 Create handleKeyDown method
+- [x] 12. Implement keyboard shortcuts
+  - [x] 12.1 Create handleKeyDown method
     - Handle Ctrl+S (Cmd+S on Mac) for save
     - Handle Escape for cancel
     - Prevent default browser behavior for Ctrl+S
     - _Requirements: 7.1, 7.2, 7.3_
   
-  - [ ] 12.2 Register and unregister keyboard event listeners
+  - [x] 12.2 Register and unregister keyboard event listeners
     - Add event listener on component mount
     - Remove event listener on component unmount
     - _Requirements: 7.4, 7.5_
   
-  - [ ] 12.3 Write property test for keyboard shortcut save
+  - [x] 12.3 Write property test for keyboard shortcut save
     - **Property 17: Keyboard Shortcut Save**
     - **Validates: Requirements 7.1, 7.3**
   
-  - [ ] 12.4 Write property test for keyboard shortcut cancel
+  - [x] 12.4 Write property test for keyboard shortcut cancel
     - **Property 18: Keyboard Shortcut Cancel**
     - **Validates: Requirements 7.2**
 
-- [ ] 13. Implement navigation guard for unsaved changes
+- [~] 13. Implement navigation guard for unsaved changes
   - [ ] 13.1 Add beforeRouteLeave navigation guard
     - Check for unsaved changes
     - Show confirmation dialog if changes exist
