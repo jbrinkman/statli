@@ -181,9 +181,9 @@ describe("SectionEditorView - Task Display Completeness", () => {
             expect(taskList.props("tasks")).toBeDefined();
 
             // Verify: TaskList receives all tasks for this section
-            // The tasks prop should be the ref object with value property
+            // The tasks prop should be the actual array value, not the ref
             const receivedTasks = taskList.props("tasks");
-            expect(receivedTasks).toEqual(mockTasks);
+            expect(receivedTasks).toEqual(tasks);
 
             // Verify: TaskList receives the section in sections prop
             const receivedSections = taskList.props("sections");
@@ -240,7 +240,7 @@ describe("SectionEditorView - Task Display Completeness", () => {
 
             // Verify: TaskList receives empty tasks array
             const receivedTasks = taskList.props("tasks");
-            expect(receivedTasks).toEqual(mockTasks);
+            expect(receivedTasks).toEqual([]);
 
             // Cleanup
             wrapper.unmount();

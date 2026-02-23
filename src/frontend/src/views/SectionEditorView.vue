@@ -40,9 +40,9 @@
                 :placeholder="'Enter section content...'" @update:modelValue="handleContentChange" />
 
             <!-- Task List for status sections -->
-            <TaskList v-else-if="sectionType === 'status'" :tasks="tasksRef" :subtasks="subtasksRef"
-                :sections="sectionsForTaskList" :status-definitions="statusDefinitions" :loading="tasksLoadingRef"
-                :error="tasksErrorRef" @create-task="handleCreateTask" @edit-task="handleEditTask"
+            <TaskList v-else-if="sectionType === 'status'" :tasks="tasksRef.value" :subtasks="subtasksRef.value"
+                :sections="sectionsForTaskList" :status-definitions="statusDefinitions" :loading="tasksLoadingRef.value"
+                :error="tasksErrorRef.value" @create-task="handleCreateTask" @edit-task="handleEditTask"
                 @delete-task="handleDeleteTask" @create-subtask="handleCreateSubtask" @edit-subtask="handleEditSubtask"
                 @delete-subtask="handleDeleteSubtask" @select-task="handleSelectTask"
                 @select-subtask="handleSelectSubtask" />
@@ -436,19 +436,21 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 </script>
 
 <style scoped>
+/* Main Container - Full viewport layout */
 .section-editor-view {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     background-color: #ffffff;
 }
 
+/* Header - Fixed height with flexbox layout */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 1.5rem;
     border-bottom: 2px solid #e0e0e0;
     background-color: #f8f9fa;
     flex-shrink: 0;
@@ -478,6 +480,11 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     color: #202124;
 }
 
+.btn-back:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+}
+
 .section-name-input {
     flex: 1;
     max-width: 400px;
@@ -494,6 +501,7 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 .section-name-input:focus {
     outline: none;
     border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
 }
 
 .section-type-selector {
@@ -510,6 +518,7 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 .section-type-selector:focus {
     outline: none;
     border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
 }
 
 .header-right {
@@ -534,6 +543,11 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     color: #202124;
 }
 
+.btn-cancel:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+}
+
 .btn-save {
     padding: 0.5rem 1rem;
     background-color: #1a73e8;
@@ -550,11 +564,17 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     background-color: #1557b0;
 }
 
+.btn-save:focus:not(:disabled) {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+}
+
 .btn-save:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
+/* Loading and Error States */
 .loading,
 .error {
     padding: 2rem;
@@ -569,21 +589,12 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     margin: 1rem;
 }
 
+/* Content Area - Fills remaining space */
 .content-area {
     flex: 1;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}
-
-.task-list-container {
-    flex: 1;
-    padding: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #5f6368;
-    font-style: italic;
 }
 
 /* Confirmation Dialog */
@@ -612,13 +623,14 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     font-size: 1.25rem;
     font-weight: 600;
     color: #202124;
-    margin-bottom: 1rem;
+    margin: 0 0 1rem 0;
 }
 
 .dialog-container p {
     font-size: 0.875rem;
     color: #5f6368;
-    margin-bottom: 1.5rem;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.5;
 }
 
 .dialog-actions {
@@ -643,6 +655,11 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     background-color: #a00;
 }
 
+.btn-discard:focus {
+    outline: 2px solid #c00;
+    outline-offset: 2px;
+}
+
 .btn-keep-editing {
     padding: 0.5rem 1rem;
     background-color: #1a73e8;
@@ -657,5 +674,10 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 
 .btn-keep-editing:hover {
     background-color: #1557b0;
+}
+
+.btn-keep-editing:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
 }
 </style>
