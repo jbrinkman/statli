@@ -11,30 +11,16 @@
       <!-- Project Name -->
       <div class="form-group">
         <label for="name" class="label required">Project Name</label>
-        <input
-          id="name"
-          v-model="formData.name"
-          type="text"
-          class="input"
-          :class="{ error: errors.name }"
-          placeholder="Enter project name"
-          required
-        />
+        <input id="name" v-model="formData.name" type="text" class="input" :class="{ error: errors.name }"
+          placeholder="Enter project name" required />
         <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
       </div>
 
       <!-- Filename Format -->
       <div class="form-group">
         <label for="filename_format" class="label required">Filename Format</label>
-        <input
-          id="filename_format"
-          v-model="formData.filename_format"
-          type="text"
-          class="input"
-          :class="{ error: errors.filename_format }"
-          placeholder="{project-name}-status-{YYYY-MM-DD}.md"
-          required
-        />
+        <input id="filename_format" v-model="formData.filename_format" type="text" class="input"
+          :class="{ error: errors.filename_format }" placeholder="{project-name}-status-{YYYY-MM-DD}.md" required />
         <span class="help-text">
           Variables: {project-name}, {YYYY-MM-DD}, {YYYY}, {MM}, {DD}
         </span>
@@ -44,15 +30,9 @@
       <!-- Report Title Format -->
       <div class="form-group">
         <label for="report_title_format" class="label required">Report Title Format</label>
-        <input
-          id="report_title_format"
-          v-model="formData.report_title_format"
-          type="text"
-          class="input"
-          :class="{ error: errors.report_title_format }"
-          placeholder="{project-name} Status Report - {YYYY-MM-DD}"
-          required
-        />
+        <input id="report_title_format" v-model="formData.report_title_format" type="text" class="input"
+          :class="{ error: errors.report_title_format }" placeholder="{project-name} Status Report - {YYYY-MM-DD}"
+          required />
         <span class="help-text">
           Variables: {project-name}, {YYYY-MM-DD}, {YYYY}, {MM}, {DD}
         </span>
@@ -62,15 +42,13 @@
       <!-- Default Directory -->
       <div class="form-group">
         <label for="default_directory" class="label required">Default Directory</label>
-        <input
-          id="default_directory"
-          v-model="formData.default_directory"
-          type="text"
-          class="input"
-          :class="{ error: errors.default_directory }"
-          placeholder="/path/to/reports"
-          required
-        />
+        <div class="directory-input-group">
+          <input id="default_directory" v-model="formData.default_directory" type="text" class="input directory-input"
+            :class="{ error: errors.default_directory }" placeholder="/path/to/reports" required />
+          <button type="button" @click="selectDirectory" class="btn-browse" aria-label="Browse for directory">
+            Browse...
+          </button>
+        </div>
         <span class="help-text">
           Directory where reports will be saved
         </span>
@@ -80,12 +58,7 @@
       <!-- Year Subfolders -->
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input
-            id="use_year_subfolders"
-            v-model="formData.use_year_subfolders"
-            type="checkbox"
-            class="checkbox"
-          />
+          <input id="use_year_subfolders" v-model="formData.use_year_subfolders" type="checkbox" class="checkbox" />
           <span>Use year-based subfolders (YYYY)</span>
         </label>
         <span class="help-text">
@@ -100,13 +73,8 @@
         <!-- To -->
         <div class="form-group">
           <label for="recipients_to" class="label">To</label>
-          <input
-            id="recipients_to"
-            v-model="formData.recipients_to"
-            type="text"
-            class="input"
-            placeholder="recipient1@example.com, recipient2@example.com"
-          />
+          <input id="recipients_to" v-model="formData.recipients_to" type="text" class="input"
+            placeholder="recipient1@example.com, recipient2@example.com" />
           <span class="help-text">
             Comma-separated email addresses
           </span>
@@ -115,13 +83,8 @@
         <!-- CC -->
         <div class="form-group">
           <label for="recipients_cc" class="label">CC</label>
-          <input
-            id="recipients_cc"
-            v-model="formData.recipients_cc"
-            type="text"
-            class="input"
-            placeholder="cc@example.com"
-          />
+          <input id="recipients_cc" v-model="formData.recipients_cc" type="text" class="input"
+            placeholder="cc@example.com" />
           <span class="help-text">
             Comma-separated email addresses
           </span>
@@ -130,13 +93,8 @@
         <!-- BCC -->
         <div class="form-group">
           <label for="recipients_bcc" class="label">BCC</label>
-          <input
-            id="recipients_bcc"
-            v-model="formData.recipients_bcc"
-            type="text"
-            class="input"
-            placeholder="bcc@example.com"
-          />
+          <input id="recipients_bcc" v-model="formData.recipients_bcc" type="text" class="input"
+            placeholder="bcc@example.com" />
           <span class="help-text">
             Comma-separated email addresses
           </span>
@@ -163,6 +121,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
+import { SelectDirectory } from '../../wailsjs/go/main/App';
 import type { Project } from '../composables/useProjects';
 
 // Props
@@ -305,6 +264,18 @@ const handleSubmit = async () => {
     submitting.value = false;
   }
 };
+
+// Handle directory selection
+const selectDirectory = async () => {
+  try {
+    const selectedPath = await SelectDirectory();
+    if (selectedPath) {
+      formData.default_directory = selectedPath;
+    }
+  } catch (err: any) {
+    console.error('Failed to select directory:', err);
+  }
+};
 </script>
 
 <style scoped>
@@ -395,11 +366,43 @@ const handleSubmit = async () => {
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
+  text-align: left;
 }
 
 .label.required::after {
   content: ' *';
   color: #c00;
+}
+
+.directory-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.directory-input {
+  flex: 1;
+}
+
+.btn-browse {
+  padding: 0.625rem 1rem;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-browse:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.btn-browse:active {
+  transform: scale(0.98);
 }
 
 .input {
@@ -415,8 +418,6 @@ const handleSubmit = async () => {
 .input:focus {
   outline: none;
   border-color: #1a73e8;
-  ring: 2px;
-  ring-color: rgba(26, 115, 232, 0.1);
   box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
 }
 
@@ -425,7 +426,6 @@ const handleSubmit = async () => {
 }
 
 .input.error:focus {
-  ring-color: rgba(204, 0, 0, 0.1);
   box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
 }
 
@@ -455,12 +455,14 @@ const handleSubmit = async () => {
   color: #6b7280;
   font-style: italic;
   line-height: 1.4;
+  text-align: left;
 }
 
 .error-message {
   font-size: 0.75rem;
   color: #c00;
   font-weight: 500;
+  text-align: left;
 }
 
 .recipients-section {

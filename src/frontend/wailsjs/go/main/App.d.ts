@@ -69,6 +69,8 @@ export function RestoreSubtask(arg1:number):Promise<void>;
 
 export function RestoreTask(arg1:number):Promise<void>;
 
+export function SelectDirectory():Promise<string>;
+
 export function SoftDeleteAllSubtasks(arg1:number):Promise<void>;
 
 export function SoftDeleteSubtask(arg1:number):Promise<void>;

@@ -11,56 +11,17 @@
       <!-- Task Name -->
       <div class="form-group">
         <label for="name" class="label required">Task Name</label>
-        <input
-          id="name"
-          v-model="formData.name"
-          type="text"
-          class="input"
-          :class="{ error: errors.name }"
-          placeholder="Enter task name"
-          required
-        />
+        <input id="name" v-model="formData.name" type="text" class="input" :class="{ error: errors.name }"
+          placeholder="Enter task name" required />
         <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
-      </div>
-
-      <!-- Report Section -->
-      <div class="form-group">
-        <label for="report_section_id" class="label required">Section</label>
-        <select
-          id="report_section_id"
-          v-model="formData.report_section_id"
-          class="input"
-          :class="{ error: errors.report_section_id }"
-          required
-        >
-          <option value="">Select a section</option>
-          <option
-            v-for="section in statusSections"
-            :key="section.id"
-            :value="section.id"
-          >
-            {{ section.name }}
-          </option>
-        </select>
-        <span v-if="errors.report_section_id" class="error-message">{{ errors.report_section_id }}</span>
       </div>
 
       <!-- Status -->
       <div class="form-group">
         <label for="status" class="label required">Status</label>
-        <select
-          id="status"
-          v-model="formData.status"
-          class="input"
-          :class="{ error: errors.status }"
-          required
-        >
+        <select id="status" v-model="formData.status" class="input" :class="{ error: errors.status }" required>
           <option value="">Select a status</option>
-          <option
-            v-for="statusDef in statusDefinitions"
-            :key="statusDef.id"
-            :value="statusDef.name"
-          >
+          <option v-for="statusDef in statusDefinitions" :key="statusDef.id" :value="statusDef.name">
             {{ statusDef.name }}
           </option>
         </select>
@@ -70,12 +31,7 @@
       <!-- Expected Completion Date -->
       <div class="form-group">
         <label for="expected_completion_date" class="label">Expected Completion Date</label>
-        <input
-          id="expected_completion_date"
-          v-model="formData.expected_completion_date"
-          type="date"
-          class="input"
-        />
+        <input id="expected_completion_date" v-model="formData.expected_completion_date" type="date" class="input" />
         <span class="help-text">
           Optional target completion date
         </span>
@@ -84,13 +40,7 @@
       <!-- URL -->
       <div class="form-group">
         <label for="url" class="label">URL</label>
-        <input
-          id="url"
-          v-model="formData.url"
-          type="url"
-          class="input"
-          placeholder="https://example.com/task"
-        />
+        <input id="url" v-model="formData.url" type="url" class="input" placeholder="https://example.com/task" />
         <span class="help-text">
           Optional link to external resource
         </span>
@@ -99,14 +49,8 @@
       <!-- Notes -->
       <div class="form-group">
         <label for="notes" class="label">Notes</label>
-        <textarea
-          id="notes"
-          ref="notesTextarea"
-          v-model="formData.notes"
-          class="textarea"
-          placeholder="Enter task notes (markdown supported)"
-          rows="3"
-        ></textarea>
+        <textarea id="notes" ref="notesTextarea" v-model="formData.notes" class="textarea"
+          placeholder="Enter task notes (markdown supported)" rows="3"></textarea>
         <span class="help-text">
           Markdown formatting supported
         </span>
@@ -133,12 +77,12 @@
 <script setup lang="ts">
 import { ref, reactive, watch, nextTick, onMounted } from 'vue';
 import type { Task } from '../composables/useTasks';
-import type { ReportSection, StatusDefinition } from '../composables/useReports';
+import type { StatusDefinition } from '../composables/useReports';
 
 // Props
 interface Props {
   task?: Task | null;
-  sections: ReportSection[];
+  sectionId: number;
   statusDefinitions: StatusDefinition[];
   projectId: number;
 }
@@ -156,13 +100,10 @@ const emit = defineEmits<{
 // Computed
 const isEdit = ref(!!props.task);
 
-// Filter status sections only
-const statusSections = ref<ReportSection[]>([]);
-
 // Form data
 const formData = reactive({
   name: '',
-  report_section_id: '' as number | '',
+  report_section_id: props.sectionId,
   status: '',
   expected_completion_date: null as string | null,
   url: '',
@@ -194,7 +135,7 @@ const initializeForm = () => {
   } else {
     // Reset form for new task
     formData.name = '';
-    formData.report_section_id = '';
+    formData.report_section_id = props.sectionId;
     formData.status = '';
     formData.expected_completion_date = null;
     formData.url = '';
@@ -204,18 +145,11 @@ const initializeForm = () => {
     formData.is_archived = false;
     isEdit.value = false;
   }
-  
+
   // Auto-resize textarea after initialization
   nextTick(() => {
     autoResizeTextarea();
   });
-};
-
-// Filter status sections
-const updateStatusSections = () => {
-  statusSections.value = props.sections
-    .filter(section => section.type === 'status')
-    .sort((a, b) => a.order - b.order);
 };
 
 // Watch for task changes
@@ -223,10 +157,12 @@ watch(() => props.task, () => {
   initializeForm();
 }, { immediate: true });
 
-// Watch for sections changes
-watch(() => props.sections, () => {
-  updateStatusSections();
-}, { immediate: true, deep: true });
+// Watch for sectionId changes
+watch(() => props.sectionId, () => {
+  if (!isEdit.value) {
+    formData.report_section_id = props.sectionId;
+  }
+});
 
 // Watch for notes changes to auto-resize
 watch(() => formData.notes, () => {

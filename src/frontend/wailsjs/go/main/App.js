@@ -134,6 +134,10 @@ export function RestoreTask(arg1) {
   return window['go']['main']['App']['RestoreTask'](arg1);
 }
 
+export function SelectDirectory() {
+  return window['go']['main']['App']['SelectDirectory']();
+}
+
 export function SoftDeleteAllSubtasks(arg1) {
   return window['go']['main']['App']['SoftDeleteAllSubtasks'](arg1);
 }

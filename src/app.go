@@ -8,6 +8,7 @@ import (
 	"src/backend/repository"
 	"src/backend/services"
 
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"go.uber.org/zap"
 )
 
@@ -327,4 +328,16 @@ func (a *App) GetSuggestedFilepath(projectID int64, dateStr string) (string, err
 // CopyToClipboard copies content to the system clipboard
 func (a *App) CopyToClipboard(content string) error {
 	return a.exportService.CopyToClipboard(content)
+}
+
+// SelectDirectory opens a directory selection dialog and returns the selected path
+func (a *App) SelectDirectory() (string, error) {
+	selection, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Select Report Directory",
+	})
+	if err != nil {
+		a.logger.Error("failed to open directory dialog", zap.Error(err))
+		return "", err
+	}
+	return selection, nil
 }
