@@ -32,7 +32,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - _Requirements: 1.4, 4.1, 4.2_
 
 - [ ] 3. Build header section with metadata controls
-  - [~] 3.1 Implement section name input field
+  - [x] 3.1 Implement section name input field
     - Create editable text input bound to sectionName
     - Add proper ARIA labels for accessibility
     - Handle name change events
