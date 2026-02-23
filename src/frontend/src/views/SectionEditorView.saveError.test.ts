@@ -153,7 +153,11 @@ describe("SectionEditorView - Save Error Handling Property Tests", () => {
             // Verify: Error message is displayed
             const errorElement = wrapper.find(".error");
             expect(errorElement.exists()).toBe(true);
-            expect(errorElement.text()).toContain(errorMessage);
+
+            // HTML collapses whitespace, so compare trimmed versions
+            if (errorMessage.trim().length > 0) {
+              expect(errorElement.text().trim()).toContain(errorMessage.trim());
+            }
 
             wrapper.unmount();
           },

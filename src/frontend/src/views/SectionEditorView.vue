@@ -34,7 +34,7 @@
         </div>
 
         <!-- Content Area -->
-        <div v-if="!loading && !error" class="content-area">
+        <div v-if="(!loading && section) || (section && error)" class="content-area">
             <!-- Monaco Editor for prose sections -->
             <MonacoEditor v-if="sectionType === 'prose'" v-model="content" language="markdown"
                 :placeholder="'Enter section content...'" @update:modelValue="handleContentChange" />
@@ -201,7 +201,10 @@ const handleSave = async () => {
         // Navigate back
         emit('navigate-back');
     } catch (err: any) {
-        error.value = err.message || 'Failed to save section';
+        // Set error message - use a default if the error message is empty or whitespace
+        const errorMessage = err.message || 'Failed to save section';
+        // Only use fallback if the trimmed message is empty, but preserve original whitespace
+        error.value = errorMessage.trim().length > 0 ? errorMessage : 'Failed to save section';
         console.error('Failed to save section:', err);
     } finally {
         saving.value = false;
@@ -332,7 +335,7 @@ const handleCreateTask = async () => {
         expected_completion_date: null,
         url: '',
         notes: '',
-        priority: tasks.value.length + 1,
+        priority: tasksRef.value.length + 1,
         is_deleted: false,
         is_archived: false,
     };

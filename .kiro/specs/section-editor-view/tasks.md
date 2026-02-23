@@ -179,7 +179,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Set saving state to false
     - _Requirements: 6.1, 6.3, 6.5, 6.6_
   
-  - [-] 10.2 Write property test for save persists all changes
+  - [x] 10.2 Write property test for save persists all changes
     - **Property 11: Save Persists All Changes**
     - **Validates: Requirements 6.1**
   
@@ -187,7 +187,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 13: Successful Save Navigation**
     - **Validates: Requirements 6.3, 9.3**
   
-  - [-] 10.4 Write property test for save error handling
+  - [x] 10.4 Write property test for save error handling
     - **Property 15: Save Error Handling**
     - **Validates: Requirements 6.5**
   
