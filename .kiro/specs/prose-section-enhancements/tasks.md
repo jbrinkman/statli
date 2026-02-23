@@ -276,7 +276,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Test malformed HTML in markdown
     - _Requirements: All_
 
-- [~] 15. Final checkpoint - Ensure all tests pass
+- [x] 15. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

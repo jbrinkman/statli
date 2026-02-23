@@ -206,6 +206,13 @@ describe("TaskView - Prose Editor Integration", () => {
 
       await wrapper.vm.$nextTick();
 
+      // Check that it emits the navigation event (new behavior)
+      expect(wrapper.emitted("navigate-to-section-editor")).toBeTruthy();
+      expect(wrapper.emitted("navigate-to-section-editor")?.[0]).toEqual([
+        mockProseSection.id,
+      ]);
+
+      // Also check backward compatibility (old behavior still works)
       expect(vm.editingProseSection).toEqual(mockProseSection);
       expect(vm.showProseEditor).toBe(true);
     });

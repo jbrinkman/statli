@@ -3,15 +3,17 @@ import { ref, onMounted } from 'vue';
 import ProjectView from './views/ProjectView.vue';
 import TaskView from './views/TaskView.vue';
 import ReportView from './views/ReportView.vue';
+import SectionEditorView from './views/SectionEditorView.vue';
 import NotificationContainer from './components/NotificationContainer.vue';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp.vue';
 import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts';
 import type { Project } from './composables/useProjects';
 
 // Navigation state
-type View = 'projects' | 'tasks' | 'report';
+type View = 'projects' | 'tasks' | 'report' | 'section-editor';
 const currentView = ref<View>('projects');
 const selectedProject = ref<Project | null>(null);
+const selectedSectionId = ref<number | null>(null);
 
 // Keyboard shortcuts help dialog
 const showShortcutsHelp = ref(false);
@@ -30,6 +32,22 @@ const handleNavigateToReport = (project: Project) => {
 const handleNavigateToProjects = () => {
   currentView.value = 'projects';
   selectedProject.value = null;
+  selectedSectionId.value = null;
+};
+
+const handleNavigateToSectionEditor = (sectionId: number) => {
+  selectedSectionId.value = sectionId;
+  currentView.value = 'section-editor';
+};
+
+const handleNavigateBackFromSectionEditor = () => {
+  selectedSectionId.value = null;
+  // Navigate back to the previous view (tasks or report)
+  if (selectedProject.value) {
+    currentView.value = 'tasks';
+  } else {
+    currentView.value = 'projects';
+  }
 };
 
 // Global keyboard shortcuts
@@ -77,24 +95,17 @@ useKeyboardShortcuts([
       <div class="nav-content">
         <h1 class="app-title">Statli</h1>
         <div class="nav-actions">
-          <button
-            @click="showShortcutsHelp = true"
-            class="btn-help"
-            aria-label="Show keyboard shortcuts (Press ?)"
-            title="Keyboard shortcuts (?)"
-          >
+          <button @click="showShortcutsHelp = true" class="btn-help" aria-label="Show keyboard shortcuts (Press ?)"
+            title="Keyboard shortcuts (?)">
             ?
           </button>
           <div class="nav-breadcrumb" role="navigation" aria-label="Breadcrumb">
-            <button 
-              v-if="currentView !== 'projects'"
-              @click="handleNavigateToProjects"
-              class="breadcrumb-link"
-              aria-label="Navigate to projects"
-            >
+            <button v-if="currentView !== 'projects'" @click="handleNavigateToProjects" class="breadcrumb-link"
+              aria-label="Navigate to projects">
               Projects
             </button>
-            <span v-if="selectedProject && currentView !== 'projects'" class="breadcrumb-separator" aria-hidden="true">/</span>
+            <span v-if="selectedProject && currentView !== 'projects'" class="breadcrumb-separator"
+              aria-hidden="true">/</span>
             <span v-if="selectedProject && currentView !== 'projects'" class="breadcrumb-current" aria-current="page">
               {{ selectedProject.name }}
             </span>
@@ -105,24 +116,15 @@ useKeyboardShortcuts([
 
     <!-- Main Content Area -->
     <main id="main-content" class="main-content" role="main">
-      <ProjectView 
-        v-if="currentView === 'projects'"
-        @navigate-to-tasks="handleNavigateToTasks"
-        data-view="projects"
-      />
-      <TaskView 
-        v-else-if="currentView === 'tasks' && selectedProject"
-        :project="selectedProject"
-        @navigate-to-report="handleNavigateToReport"
-        @navigate-to-projects="handleNavigateToProjects"
-        data-view="tasks"
-      />
-      <ReportView 
-        v-else-if="currentView === 'report' && selectedProject"
-        :project="selectedProject"
-        @navigate-to-tasks="() => handleNavigateToTasks(selectedProject!)"
-        data-view="report"
-      />
+      <ProjectView v-if="currentView === 'projects'" @navigate-to-tasks="handleNavigateToTasks" data-view="projects" />
+      <TaskView v-else-if="currentView === 'tasks' && selectedProject" :project="selectedProject"
+        @navigate-to-report="handleNavigateToReport" @navigate-to-projects="handleNavigateToProjects"
+        @navigate-to-section-editor="handleNavigateToSectionEditor" data-view="tasks" />
+      <ReportView v-else-if="currentView === 'report' && selectedProject" :project="selectedProject"
+        @navigate-to-tasks="() => handleNavigateToTasks(selectedProject!)" data-view="report" />
+      <SectionEditorView v-else-if="currentView === 'section-editor' && selectedSectionId"
+        :section-id="selectedSectionId" @navigate-back="handleNavigateBackFromSectionEditor"
+        data-view="section-editor" />
     </main>
   </div>
 </template>

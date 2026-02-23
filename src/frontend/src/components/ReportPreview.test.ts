@@ -98,17 +98,34 @@ describe("ReportPreview", () => {
   });
 
   it("renders section content with HTML", () => {
+    const mockReportSections = [
+      {
+        id: 1,
+        project_id: 1,
+        name: "TL;DR",
+        type: "prose",
+        content: "This is a summary of the report.",
+        order: 0,
+        is_enabled: true,
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+      },
+    ];
+
     const wrapper = mount(ReportPreview, {
       props: {
         report: mockReport,
+        reportSections: mockReportSections,
       },
     });
 
+    // Prose sections use RenderedProseSection component, status sections use section-content div
+    const sections = wrapper.findAll(".report-section");
+    expect(sections[0].html()).toContain("This is a summary of the report");
+
     const sectionContent = wrapper.findAll(".section-content");
-    expect(sectionContent[0].html()).toContain(
-      "This is a summary of the report",
-    );
-    expect(sectionContent[1].html()).toContain("Task 1");
+    expect(sectionContent).toHaveLength(1); // Only status section has section-content
+    expect(sectionContent[0].html()).toContain("Task 1");
   });
 
   it("renders status badges with CSS classes", () => {
@@ -118,7 +135,7 @@ describe("ReportPreview", () => {
       },
     });
 
-    const sectionContent = wrapper.findAll(".section-content")[1];
+    const sectionContent = wrapper.findAll(".section-content")[0]; // Changed from [1] to [0]
     expect(sectionContent.html()).toContain("status-green");
     expect(sectionContent.html()).toContain("done");
   });
@@ -130,7 +147,7 @@ describe("ReportPreview", () => {
       },
     });
 
-    const sectionContent = wrapper.findAll(".section-content")[1];
+    const sectionContent = wrapper.findAll(".section-content")[0]; // Changed from [1] to [0]
     expect(sectionContent.html()).toContain(
       '<a href="https://example.com/task1"',
     );

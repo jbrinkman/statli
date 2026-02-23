@@ -253,7 +253,6 @@ const handleSubmit = async () => {
 
 // Initialize on mount
 onMounted(() => {
-  updateStatusSections();
   autoResizeTextarea();
 });
 </script>

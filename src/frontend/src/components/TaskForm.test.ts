@@ -95,7 +95,7 @@ describe("TaskForm", () => {
   beforeEach(() => {
     wrapper = mount(TaskForm, {
       props: {
-        sections: mockSections,
+        sectionId: 1, // Changed from sections array to sectionId
         statusDefinitions: mockStatusDefinitions,
         projectId: 1,
       },
@@ -106,7 +106,7 @@ describe("TaskForm", () => {
     it("should render the form with all fields", () => {
       expect(wrapper.find("h2").text()).toBe("Create Task");
       expect(wrapper.find("#name").exists()).toBe(true);
-      expect(wrapper.find("#report_section_id").exists()).toBe(true);
+      // Section dropdown removed - sectionId is now a prop
       expect(wrapper.find("#status").exists()).toBe(true);
       expect(wrapper.find("#expected_completion_date").exists()).toBe(true);
       expect(wrapper.find("#url").exists()).toBe(true);
@@ -126,8 +126,7 @@ describe("TaskForm", () => {
       await wrapper.setProps({ task: mockTask });
 
       const nameInput = wrapper.find("#name").element as HTMLInputElement;
-      const sectionSelect = wrapper.find("#report_section_id")
-        .element as HTMLSelectElement;
+      // Section select no longer exists - sectionId is a prop
       const statusSelect = wrapper.find("#status").element as HTMLSelectElement;
       const ecdInput = wrapper.find("#expected_completion_date")
         .element as HTMLInputElement;
@@ -136,23 +135,16 @@ describe("TaskForm", () => {
         .element as HTMLTextAreaElement;
 
       expect(nameInput.value).toBe("Test Task");
-      expect(Number(sectionSelect.value)).toBe(1);
+      // Verify sectionId is set correctly in formData
+      expect(wrapper.vm.formData.report_section_id).toBe(1);
       expect(statusSelect.value).toBe("in progress");
       expect(ecdInput.value).toBe("2024-12-31");
       expect(urlInput.value).toBe("https://example.com");
       expect(notesTextarea.value).toBe("Test notes");
     });
 
-    it("should only show status-type sections in section dropdown", () => {
-      const sectionSelect = wrapper.find("#report_section_id");
-      const options = sectionSelect.findAll("option");
-
-      // Should have 3 options: placeholder + 2 status sections
-      expect(options.length).toBe(3);
-      expect(options[0].text()).toBe("Select a section");
-      expect(options[1].text()).toBe("Weekly Support");
-      expect(options[2].text()).toBe("Roadmap");
-    });
+    // Test removed: "should only show status-type sections in section dropdown"
+    // The component no longer has a section dropdown - sectionId is passed as a prop
 
     it("should show all status definitions in status dropdown", () => {
       const statusSelect = wrapper.find("#status");
@@ -177,21 +169,14 @@ describe("TaskForm", () => {
       );
     });
 
-    it("should show error when section is not selected", async () => {
-      const nameInput = wrapper.find("#name");
-      await nameInput.setValue("Test Task");
-
-      await wrapper.find("form").trigger("submit.prevent");
-
-      expect(wrapper.vm.errors.report_section_id).toBe("Section is required");
-    });
+    // Test removed: "should show error when section is not selected"
+    // Section is now a required prop, not a form field that can be empty
 
     it("should show error when status is not selected", async () => {
       const nameInput = wrapper.find("#name");
       await nameInput.setValue("Test Task");
 
-      const sectionSelect = wrapper.find("#report_section_id");
-      await sectionSelect.setValue(1);
+      // Section is already set via prop, no need to select it
 
       await wrapper.find("form").trigger("submit.prevent");
 
@@ -202,9 +187,7 @@ describe("TaskForm", () => {
       const nameInput = wrapper.find("#name");
       await nameInput.setValue("Test Task");
 
-      const sectionSelect = wrapper.find("#report_section_id");
-      await sectionSelect.setValue("1");
-      await wrapper.vm.$nextTick();
+      // Section select removed - sectionId is a prop
 
       const statusSelect = wrapper.find("#status");
       await statusSelect.setValue("in progress");
@@ -214,7 +197,7 @@ describe("TaskForm", () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.errors.name).toBeUndefined();
-      expect(wrapper.vm.errors.report_section_id).toBeUndefined();
+      // report_section_id error check removed - it's a prop now
       expect(wrapper.vm.errors.status).toBeUndefined();
     });
   });
@@ -224,9 +207,7 @@ describe("TaskForm", () => {
       const nameInput = wrapper.find("#name");
       await nameInput.setValue("New Task");
 
-      const sectionSelect = wrapper.find("#report_section_id");
-      await sectionSelect.setValue("1");
-      await wrapper.vm.$nextTick();
+      // Section select removed - sectionId is a prop
 
       const statusSelect = wrapper.find("#status");
       await statusSelect.setValue("not started");
@@ -275,9 +256,7 @@ describe("TaskForm", () => {
       const nameInput = wrapper.find("#name");
       await nameInput.setValue("Task without ECD");
 
-      const sectionSelect = wrapper.find("#report_section_id");
-      await sectionSelect.setValue("1");
-      await wrapper.vm.$nextTick();
+      // Section select removed - sectionId is a prop
 
       const statusSelect = wrapper.find("#status");
       await statusSelect.setValue("not started");
@@ -351,18 +330,13 @@ describe("TaskForm", () => {
       expect(wrapper.vm.errors.name).toBe("Task name is required");
     });
 
-    it("should validate Requirement 3.2: Section assignment is required", async () => {
-      const nameInput = wrapper.find("#name");
-      await nameInput.setValue("Test Task");
-
-      await wrapper.find("form").trigger("submit.prevent");
-      expect(wrapper.vm.errors.report_section_id).toBe("Section is required");
-    });
+    // Test removed: "should validate Requirement 3.2: Section assignment is required"
+    // Section is now a required prop, not a form field that can be validated
 
     it("should support Requirement 12.3: Form for creating/editing tasks", () => {
       expect(wrapper.find("form").exists()).toBe(true);
       expect(wrapper.find("#name").exists()).toBe(true);
-      expect(wrapper.find("#report_section_id").exists()).toBe(true);
+      // Section dropdown removed - sectionId is a prop
       expect(wrapper.find("#status").exists()).toBe(true);
     });
 
