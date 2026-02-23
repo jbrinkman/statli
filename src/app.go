@@ -364,3 +364,39 @@ func (a *App) GetProjectStylesheet(projectID int64) (string, error) {
 
 	return project.MasterStylesheet, nil
 }
+
+// UpdateProjectStylesheet updates the master stylesheet for a project
+func (a *App) UpdateProjectStylesheet(projectID int64, css string) error {
+	a.logger.Info("updating project stylesheet",
+		zap.Int64("project_id", projectID),
+		zap.Int("stylesheet_length", len(css)),
+	)
+
+	// Validate project exists before update
+	project, err := a.projectService.GetProject(projectID)
+	if err != nil {
+		a.logger.Error("failed to get project for stylesheet update",
+			zap.Error(err),
+			zap.Int64("project_id", projectID),
+		)
+		return err
+	}
+
+	// Update the master stylesheet field
+	project.MasterStylesheet = css
+
+	// Update the project in the database
+	if err := a.projectService.UpdateProject(project); err != nil {
+		a.logger.Error("failed to update project stylesheet",
+			zap.Error(err),
+			zap.Int64("project_id", projectID),
+		)
+		return err
+	}
+
+	a.logger.Info("project stylesheet updated successfully",
+		zap.Int64("project_id", projectID),
+	)
+
+	return nil
+}

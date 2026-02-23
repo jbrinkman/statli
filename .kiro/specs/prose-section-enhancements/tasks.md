@@ -32,7 +32,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Return empty string for projects without stylesheet
     - _Requirements: 5.2_
   
-  - [~] 3.2 Implement UpdateProjectStylesheet method
+  - [x] 3.2 Implement UpdateProjectStylesheet method
     - Add Go method to App struct to update master_stylesheet in projects table
     - Validate project exists before update
     - Return error if update fails

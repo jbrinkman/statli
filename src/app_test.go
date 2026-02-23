@@ -243,3 +243,109 @@ func TestGetProjectStylesheet_Empty(t *testing.T) {
 		t.Errorf("expected empty stylesheet, got '%s'", stylesheet)
 	}
 }
+
+func TestUpdateProjectStylesheet(t *testing.T) {
+	// Create a temporary directory for test database
+	tempDir := t.TempDir()
+
+	// Set environment variable for database location
+	dbPath := filepath.Join(tempDir, "test.db")
+	os.Setenv("STATUS_REPORT_DB_PATH", dbPath)
+	defer os.Unsetenv("STATUS_REPORT_DB_PATH")
+
+	app := NewApp()
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// Create a test project
+	project := &models.Project{
+		Name:             "Test Project",
+		MasterStylesheet: "",
+	}
+
+	err := app.CreateProject(project)
+	if err != nil {
+		t.Fatalf("failed to create project: %v", err)
+	}
+
+	// Update the stylesheet
+	newCSS := ".prose-content { color: red; font-size: 16px; }"
+	err = app.UpdateProjectStylesheet(project.ID, newCSS)
+	if err != nil {
+		t.Fatalf("UpdateProjectStylesheet() failed: %v", err)
+	}
+
+	// Verify the stylesheet was updated
+	stylesheet, err := app.GetProjectStylesheet(project.ID)
+	if err != nil {
+		t.Fatalf("GetProjectStylesheet() failed: %v", err)
+	}
+
+	if stylesheet != newCSS {
+		t.Errorf("expected stylesheet '%s', got '%s'", newCSS, stylesheet)
+	}
+}
+
+func TestUpdateProjectStylesheet_NotFound(t *testing.T) {
+	// Create a temporary directory for test database
+	tempDir := t.TempDir()
+
+	// Set environment variable for database location
+	dbPath := filepath.Join(tempDir, "test.db")
+	os.Setenv("STATUS_REPORT_DB_PATH", dbPath)
+	defer os.Unsetenv("STATUS_REPORT_DB_PATH")
+
+	app := NewApp()
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// Test UpdateProjectStylesheet with non-existing project
+	err := app.UpdateProjectStylesheet(999, ".prose-content { color: blue; }")
+	if err == nil {
+		t.Error("expected error for non-existent project")
+	}
+}
+
+func TestUpdateProjectStylesheet_EmptyCSS(t *testing.T) {
+	// Create a temporary directory for test database
+	tempDir := t.TempDir()
+
+	// Set environment variable for database location
+	dbPath := filepath.Join(tempDir, "test.db")
+	os.Setenv("STATUS_REPORT_DB_PATH", dbPath)
+	defer os.Unsetenv("STATUS_REPORT_DB_PATH")
+
+	app := NewApp()
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// Create a test project with a stylesheet
+	project := &models.Project{
+		Name:             "Test Project",
+		MasterStylesheet: ".prose-content { color: blue; }",
+	}
+
+	err := app.CreateProject(project)
+	if err != nil {
+		t.Fatalf("failed to create project: %v", err)
+	}
+
+	// Update with empty CSS (should be allowed)
+	err = app.UpdateProjectStylesheet(project.ID, "")
+	if err != nil {
+		t.Fatalf("UpdateProjectStylesheet() failed with empty CSS: %v", err)
+	}
+
+	// Verify the stylesheet was cleared
+	stylesheet, err := app.GetProjectStylesheet(project.ID)
+	if err != nil {
+		t.Fatalf("GetProjectStylesheet() failed: %v", err)
+	}
+
+	if stylesheet != "" {
+		t.Errorf("expected empty stylesheet, got '%s'", stylesheet)
+	}
+}
