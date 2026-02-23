@@ -66,7 +66,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Clear/preserve content appropriately during type switch
     - _Requirements: 4.4, 4.5_
   
-  - [~] 4.4 Write property test for section type change component switch
+  - [x] 4.4 Write property test for section type change component switch
     - **Property 3: Section Type Change Component Switch**
     - **Validates: Requirements 4.4, 4.5**
 
