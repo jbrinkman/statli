@@ -37,7 +37,7 @@
         <div v-if="!loading && !error" class="content-area">
             <!-- Monaco Editor for prose sections -->
             <MonacoEditor v-if="sectionType === 'prose'" v-model="content" language="markdown"
-                :placeholder="'Enter section content...'" />
+                :placeholder="'Enter section content...'" @update:modelValue="handleContentChange" />
 
             <!-- Task List for status sections -->
             <div v-else-if="sectionType === 'status'" class="task-list-container">
@@ -185,6 +185,14 @@ const handleCancel = () => {
 const confirmDiscard = () => {
     showConfirmDialog.value = false;
     emit('navigate-back');
+};
+
+// Handle content change from MonacoEditor
+const handleContentChange = (newContent: string) => {
+    content.value = newContent;
+    // Content change tracking is automatically handled by the reactive ref
+    // The hasUnsavedChanges() method will detect changes by comparing
+    // content.value with originalContent.value
 };
 
 // LocalStorage methods
