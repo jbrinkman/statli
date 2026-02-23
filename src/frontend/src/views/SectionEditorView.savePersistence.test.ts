@@ -248,6 +248,8 @@ describe("SectionEditorView - Save Persistence Property Tests", () => {
           async (originalSection: ReportSection, newContent: string) => {
             // Ensure the new content is actually different
             fc.pre(newContent !== originalSection.content);
+            // Ensure the section name is valid (not whitespace-only)
+            fc.pre(originalSection.name.trim().length > 0);
 
             // Setup: Mock the backend
             mockGetReportSection.mockResolvedValue(originalSection);

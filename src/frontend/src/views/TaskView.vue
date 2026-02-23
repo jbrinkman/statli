@@ -482,13 +482,8 @@ const handleToggleSection = async (section: ReportSection) => {
 
 // Prose editor handlers
 const handleEditProseSection = (section: ReportSection) => {
-  // New behavior: navigate to section editor view
+  // Navigate to section editor view
   emit('navigate-to-section-editor', section.id);
-
-  // Old behavior kept for backward compatibility with tests
-  // This can be removed once all tests are updated
-  editingProseSection.value = section;
-  showProseEditor.value = true;
 };
 
 const handleProseSave = async (content: string) => {

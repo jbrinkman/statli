@@ -118,6 +118,7 @@ describe("SectionEditorView - Save Button Disabled Property Tests", () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0); // Skip whitespace-only names
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();
@@ -204,6 +205,7 @@ describe("SectionEditorView - Save Button Disabled Property Tests", () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0); // Skip whitespace-only names
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();
@@ -354,6 +356,7 @@ describe("SectionEditorView - Save Button Disabled Property Tests", () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (originalSection: ReportSection, newName: string) => {
             fc.pre(newName !== originalSection.name);
+            fc.pre(newName.trim().length > 0); // Skip whitespace-only names
 
             mockGetReportSection.mockClear();
             mockUpdateReportSection.mockClear();

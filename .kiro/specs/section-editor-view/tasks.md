@@ -278,7 +278,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Semantic HTML structure
     - _Requirements: 10.5_
 
-- [-] 16. Add error handling and edge cases
+- [x] 16. Add error handling and edge cases
   - [x] 16.1 Handle backend API errors
     - Display user-friendly error messages
     - Log detailed errors to console
@@ -299,7 +299,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - _Requirements: 4.1_
 
 - [ ] 17. Integration and wiring
-  - [ ] 17.1 Update navigation triggers to use new route
+  - [x] 17.1 Update navigation triggers to use new route
     - Update section edit buttons/links to navigate to `/section/:id`
     - Ensure proper section ID is passed in route
     - _Requirements: 9.1_
