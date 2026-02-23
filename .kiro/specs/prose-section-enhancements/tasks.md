@@ -71,7 +71,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Implement unsaved changes confirmation dialog
     - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4, 2.5_
   
-  - [~] 5.2 Implement auto-save to localStorage
+  - [x] 5.2 Implement auto-save to localStorage
     - Save draft to localStorage every 30 seconds
     - Restore draft on editor open if available
     - Clear draft on successful save

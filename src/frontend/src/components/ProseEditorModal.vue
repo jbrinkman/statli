@@ -64,12 +64,97 @@ const emit = defineEmits<Emits>();
 const content = ref(props.section.content || '');
 const originalContent = ref(props.section.content || '');
 const showConfirmDialog = ref(false);
+const autoSaveIntervalId = ref<number | null>(null);
+
+// Generate localStorage key for this section
+const getLocalStorageKey = () => {
+    return `prose-draft-${props.section.id}`;
+};
+
+// Save draft to localStorage
+const saveDraftToLocalStorage = () => {
+    try {
+        const key = getLocalStorageKey();
+        localStorage.setItem(key, content.value);
+    } catch (error) {
+        console.warn('Failed to save draft to localStorage:', error);
+        // Disable auto-save if localStorage is unavailable
+        if (autoSaveIntervalId.value !== null) {
+            clearInterval(autoSaveIntervalId.value);
+            autoSaveIntervalId.value = null;
+        }
+    }
+};
+
+// Restore draft from localStorage
+const restoreDraftFromLocalStorage = () => {
+    try {
+        const key = getLocalStorageKey();
+        const draft = localStorage.getItem(key);
+        if (draft !== null) {
+            content.value = draft;
+        }
+    } catch (error) {
+        console.warn('Failed to restore draft from localStorage:', error);
+    }
+};
+
+// Clear draft from localStorage
+const clearDraftFromLocalStorage = () => {
+    try {
+        const key = getLocalStorageKey();
+        localStorage.removeItem(key);
+    } catch (error) {
+        console.warn('Failed to clear draft from localStorage:', error);
+    }
+};
+
+// Start auto-save interval
+const startAutoSave = () => {
+    // Clear any existing interval
+    if (autoSaveIntervalId.value !== null) {
+        clearInterval(autoSaveIntervalId.value);
+    }
+
+    // Save every 30 seconds (30000 milliseconds)
+    autoSaveIntervalId.value = window.setInterval(() => {
+        saveDraftToLocalStorage();
+    }, 30000);
+};
+
+// Stop auto-save interval
+const stopAutoSave = () => {
+    if (autoSaveIntervalId.value !== null) {
+        clearInterval(autoSaveIntervalId.value);
+        autoSaveIntervalId.value = null;
+    }
+};
 
 // Initialize content when modal opens or section changes
 watch(() => props.isOpen, (isOpen) => {
     if (isOpen) {
-        content.value = props.section.content || '';
+        // First, set the original content
         originalContent.value = props.section.content || '';
+
+        // Try to restore from localStorage
+        try {
+            const key = getLocalStorageKey();
+            const draft = localStorage.getItem(key);
+            if (draft !== null) {
+                content.value = draft;
+            } else {
+                content.value = props.section.content || '';
+            }
+        } catch (error) {
+            console.warn('Failed to restore draft from localStorage:', error);
+            content.value = props.section.content || '';
+        }
+
+        // Start auto-save
+        startAutoSave();
+    } else {
+        // Stop auto-save when modal closes
+        stopAutoSave();
     }
 });
 
@@ -90,6 +175,9 @@ const hasUnsavedChanges = () => {
 const handleSave = () => {
     emit('save', content.value);
     originalContent.value = content.value;
+
+    // Clear draft from localStorage on successful save
+    clearDraftFromLocalStorage();
 };
 
 // Handle cancel
@@ -136,12 +224,33 @@ watch(() => props.isOpen, (isOpen) => {
 onMounted(() => {
     if (props.isOpen) {
         window.addEventListener('keydown', handleKeyDown);
+
+        // Initialize content if modal is already open on mount
+        originalContent.value = props.section.content || '';
+
+        // Try to restore from localStorage
+        try {
+            const key = getLocalStorageKey();
+            const draft = localStorage.getItem(key);
+            if (draft !== null) {
+                content.value = draft;
+            } else {
+                content.value = props.section.content || '';
+            }
+        } catch (error) {
+            console.warn('Failed to restore draft from localStorage:', error);
+            content.value = props.section.content || '';
+        }
+
+        // Start auto-save
+        startAutoSave();
     }
 });
 
 // Cleanup on unmount
 onUnmounted(() => {
     window.removeEventListener('keydown', handleKeyDown);
+    stopAutoSave();
 });
 </script>
 

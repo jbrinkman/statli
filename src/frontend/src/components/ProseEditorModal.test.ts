@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import ProseEditorModal from "./ProseEditorModal.vue";
@@ -8,7 +8,8 @@ import MonacoEditor from "./MonacoEditor.vue";
 vi.mock("./MonacoEditor.vue", () => ({
   default: {
     name: "MonacoEditor",
-    template: '<div class="mock-monaco-editor"></div>',
+    template:
+      '<div class="mock-monaco-editor"><input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
     props: ["modelValue", "language", "theme"],
     emits: ["update:modelValue"],
   },
@@ -29,6 +30,15 @@ describe("ProseEditorModal", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Clear localStorage before each test
+    localStorage.clear();
+    // Use fake timers for auto-save tests
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    // Restore real timers after each test
+    vi.restoreAllMocks();
   });
 
   it("renders full-screen modal when opened", () => {
@@ -141,7 +151,7 @@ describe("ProseEditorModal", () => {
 
     // Simulate content change
     const monacoEditor = wrapper.findComponent(MonacoEditor);
-    await monacoEditor.vm.$emit("update:modelValue", "Modified content");
+    monacoEditor.vm.$emit("update:modelValue", "Modified content");
     await nextTick();
 
     // Try to cancel
@@ -165,7 +175,7 @@ describe("ProseEditorModal", () => {
 
     // Simulate content change
     const monacoEditor = wrapper.findComponent(MonacoEditor);
-    await monacoEditor.vm.$emit("update:modelValue", "Modified content");
+    monacoEditor.vm.$emit("update:modelValue", "Modified content");
     await nextTick();
 
     // Try to cancel
@@ -191,7 +201,7 @@ describe("ProseEditorModal", () => {
 
     // Simulate content change
     const monacoEditor = wrapper.findComponent(MonacoEditor);
-    await monacoEditor.vm.$emit("update:modelValue", "Modified content");
+    monacoEditor.vm.$emit("update:modelValue", "Modified content");
     await nextTick();
 
     // Try to cancel
@@ -288,7 +298,7 @@ describe("ProseEditorModal", () => {
 
     // Simulate content change
     const monacoEditor = wrapper.findComponent(MonacoEditor);
-    await monacoEditor.vm.$emit("update:modelValue", "Modified content");
+    monacoEditor.vm.$emit("update:modelValue", "Modified content");
     await nextTick();
 
     // Try to cancel to show confirmation dialog
@@ -345,7 +355,7 @@ describe("ProseEditorModal", () => {
     const monacoEditor = wrapper.findComponent(MonacoEditor);
     const newContent = "Updated content from editor";
 
-    await monacoEditor.vm.$emit("update:modelValue", newContent);
+    monacoEditor.vm.$emit("update:modelValue", newContent);
     await nextTick();
 
     // Click save to verify the updated content is emitted
@@ -381,5 +391,115 @@ describe("ProseEditorModal", () => {
     await nextTick();
 
     expect(wrapper.emitted("cancel")).toBeTruthy();
+  });
+
+  describe("Auto-save functionality", () => {
+    it("saves draft to localStorage every 30 seconds", async () => {
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      monacoEditor.vm.$emit("update:modelValue", "Draft content");
+      await nextTick();
+
+      // Fast-forward time by 30 seconds
+      vi.advanceTimersByTime(30000);
+      await nextTick();
+
+      // Check that draft was saved to localStorage
+      const key = `prose-draft-${mockSection.id}`;
+      expect(localStorage.getItem(key)).toBe("Draft content");
+    });
+
+    it("restores draft from localStorage when editor opens", async () => {
+      // Save a draft to localStorage
+      const key = `prose-draft-${mockSection.id}`;
+      localStorage.setItem(key, "Restored draft content");
+
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      expect(monacoEditor.props("modelValue")).toBe("Restored draft content");
+    });
+
+    it("clears draft from localStorage on successful save", async () => {
+      // Save a draft to localStorage
+      const key = `prose-draft-${mockSection.id}`;
+      localStorage.setItem(key, "Draft to be cleared");
+
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      // Click save button
+      const saveButton = wrapper.find(".btn-save");
+      await saveButton.trigger("click");
+      await nextTick();
+
+      // Check that draft was cleared from localStorage
+      expect(localStorage.getItem(key)).toBeNull();
+    });
+
+    it("stops auto-save when modal closes", async () => {
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      monacoEditor.vm.$emit("update:modelValue", "Content before close");
+      await nextTick();
+
+      // Close the modal
+      await wrapper.setProps({ isOpen: false });
+      await nextTick();
+
+      // Update content after modal is closed
+      const key = `prose-draft-${mockSection.id}`;
+      localStorage.setItem(key, "Different content");
+
+      // Fast-forward time by 30 seconds
+      vi.advanceTimersByTime(30000);
+      await nextTick();
+
+      // The auto-save should not have overwritten the localStorage
+      expect(localStorage.getItem(key)).toBe("Different content");
+    });
+
+    it("uses section content if no draft is available", async () => {
+      const wrapper = mount(ProseEditorModal, {
+        props: {
+          section: mockSection,
+          isOpen: true,
+        },
+      });
+
+      await nextTick();
+
+      const monacoEditor = wrapper.findComponent(MonacoEditor);
+      expect(monacoEditor.props("modelValue")).toBe("Initial content");
+    });
   });
 });
