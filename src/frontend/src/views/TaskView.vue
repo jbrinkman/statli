@@ -89,6 +89,10 @@
         </div>
       </div>
 
+      <!-- ProseEditorModal for editing prose sections -->
+      <ProseEditorModal v-if="editingProseSection" :section="editingProseSection" :is-open="showProseEditor"
+        @save="handleProseSave" @cancel="handleProseCancel" />
+
       <!-- Section-Centric View -->
       <div class="sections-view">
         <!-- Sections Header -->
@@ -133,6 +137,9 @@
               <div class="prose-preview">
                 {{ truncateContent(section.content || 'No content') }}
               </div>
+              <button @click="handleEditProseSection(section)" class="btn-edit-prose">
+                ✎ Edit Content
+              </button>
             </div>
 
             <!-- Status Section Tasks -->
@@ -214,6 +221,7 @@ import { ref, onMounted, computed } from 'vue';
 import TaskForm from '../components/TaskForm.vue';
 import SubtaskForm from '../components/SubtaskForm.vue';
 import ProjectForm from '../components/ProjectForm.vue';
+import ProseEditorModal from '../components/ProseEditorModal.vue';
 import { useTasks, type Task, type Subtask } from '../composables/useTasks';
 import { useReports, type ReportSection } from '../composables/useReports';
 import { useKeyboardShortcuts } from '../composables/useKeyboardShortcuts';
@@ -265,9 +273,11 @@ const showTaskForm = ref(false);
 const showSubtaskForm = ref(false);
 const showConfigDialog = ref(false);
 const showSectionForm = ref(false);
+const showProseEditor = ref(false);
 const editingTask = ref<Task | null>(null);
 const editingSubtask = ref<Subtask | null>(null);
 const editingSection = ref<ReportSection | null>(null);
+const editingProseSection = ref<ReportSection | null>(null);
 const selectedTask = ref<Task | null>(null);
 const currentSectionId = ref<number | null>(null);
 const allTasks = ref<Task[]>([]);
@@ -467,6 +477,37 @@ const handleToggleSection = async (section: ReportSection) => {
   } catch (err: any) {
     console.error('Failed to toggle section:', err);
   }
+};
+
+// Prose editor handlers
+const handleEditProseSection = (section: ReportSection) => {
+  editingProseSection.value = section;
+  showProseEditor.value = true;
+};
+
+const handleProseSave = async (content: string) => {
+  if (!editingProseSection.value) return;
+
+  try {
+    await updateReportSection({
+      ...editingProseSection.value,
+      content: content,
+    });
+
+    showProseEditor.value = false;
+    editingProseSection.value = null;
+
+    // Refresh section list to show updated content
+    await loadReportSections(props.project.id);
+  } catch (err: any) {
+    console.error('Failed to save prose section:', err);
+    alert(`Failed to save section: ${err.message || 'Unknown error'}`);
+  }
+};
+
+const handleProseCancel = () => {
+  showProseEditor.value = false;
+  editingProseSection.value = null;
 };
 
 // Task handlers
@@ -901,6 +942,9 @@ useKeyboardShortcuts([
   padding: 1rem;
   background-color: white;
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .prose-preview {
@@ -908,6 +952,23 @@ useKeyboardShortcuts([
   color: #5f6368;
   white-space: pre-wrap;
   line-height: 1.6;
+}
+
+.btn-edit-prose {
+  padding: 0.5rem 1rem;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.btn-edit-prose:hover {
+  background-color: #1557b0;
 }
 
 .tasks-container {

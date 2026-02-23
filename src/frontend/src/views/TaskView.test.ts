@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import TaskView from "./TaskView.vue";
 import type { Project } from "../composables/useProjects";
+import fc from "fast-check";
 
 // Mock window.go
 const mockApp = {
@@ -16,6 +17,9 @@ const mockApp = {
     },
   },
 };
+
+// Mock alert for test environment
+(global as any).alert = vi.fn();
 
 // Mock the composables
 vi.mock("../composables/useTasks", () => ({
@@ -41,6 +45,7 @@ vi.mock("../composables/useReports", () => ({
     error: { value: null },
     loadReportSections: vi.fn().mockResolvedValue(undefined),
     loadStatusDefinitions: vi.fn().mockResolvedValue(undefined),
+    updateReportSection: vi.fn().mockResolvedValue(undefined),
   }),
 }));
 
@@ -441,6 +446,118 @@ describe("TaskView", () => {
 
       // Should not show loading anymore
       expect(wrapper.text()).not.toContain("Loading project data");
+    });
+  });
+
+  // Property-Based Tests
+  describe("Property-Based Tests", () => {
+    /**
+     * **Property 2: Markdown and HTML Input Acceptance**
+     * **Validates: Requirements 2.1, 2.2**
+     *
+     * For any valid markdown or HTML string, the section editor SHALL accept
+     * the input and store it without modification or rejection.
+     */
+    it("accepts and stores markdown and HTML without modification", async () => {
+      // Create a spy on the mocked updateReportSection
+      const { useReports } = await import("../composables/useReports");
+      const mockUseReports = useReports();
+      const updateSpy = vi.spyOn(mockUseReports, "updateReportSection");
+
+      await fc.assert(
+        fc.asyncProperty(
+          fc.oneof(
+            // Markdown strings with special characters
+            fc.string({ minLength: 0, maxLength: 1000 }),
+            // Markdown with headers
+            fc.string().map((s) => `# ${s}\n## ${s}`),
+            // Markdown with bold/italic
+            fc.string().map((s) => `**${s}** _${s}_`),
+            // HTML strings
+            fc.string().map((s) => `<div>${s}</div>`),
+            fc.string().map((s) => `<p>${s}</p><span>${s}</span>`),
+            // Long strings
+            fc.string({ minLength: 500, maxLength: 5000 }),
+            // Special characters
+            fc.constantFrom(
+              "# Header\n\n**Bold** _italic_",
+              "<div>HTML content</div>",
+              "```code block```",
+              "[link](url)",
+              "- list\n- items",
+              "| table | header |\n|-------|--------|\n| cell  | cell   |",
+              "<!-- comment -->",
+              "&lt;escaped&gt;",
+              "emoji 🎉 unicode ñ",
+              "\n\n\n",
+              "   spaces   ",
+              "\ttabs\t",
+            ),
+          ),
+          async (content) => {
+            // Mock updateReportSection to capture the content
+            const mockUpdateReportSection = vi
+              .fn()
+              .mockResolvedValue(undefined);
+            const mockLoadReportSections = vi.fn().mockResolvedValue(undefined);
+
+            const mockProseSection = {
+              id: 1,
+              project_id: 1,
+              name: "Test Prose Section",
+              type: "prose",
+              content: "",
+              order: 1,
+              is_enabled: true,
+              created_at: "2024-01-01T00:00:00Z",
+              updated_at: "2024-01-01T00:00:00Z",
+            };
+
+            const wrapper = mount(TaskView, {
+              props: {
+                project: mockProject,
+              },
+              global: {
+                stubs: {
+                  TaskList: true,
+                  TaskForm: true,
+                  SubtaskForm: true,
+                  ProjectForm: true,
+                  ProseEditorModal: true,
+                },
+              },
+            });
+
+            // Simulate opening the editor and saving content
+            const vm = wrapper.vm as any;
+
+            // Override the composable methods with our mocks
+            vm.updateReportSection = mockUpdateReportSection;
+            vm.loadReportSections = mockLoadReportSections;
+
+            vm.editingProseSection = mockProseSection;
+            vm.showProseEditor = true;
+
+            await wrapper.vm.$nextTick();
+
+            // Simulate save with the generated content
+            await vm.handleProseSave(content);
+
+            // Verify that updateReportSection was called with the exact content
+            expect(mockUpdateReportSection).toHaveBeenCalledWith(
+              expect.objectContaining({
+                content: content,
+              }),
+            );
+
+            // Verify content was not modified
+            const savedContent =
+              mockUpdateReportSection.mock.calls[0][0].content;
+            expect(savedContent).toBe(content);
+          },
+        ),
+        { numRuns: 100 },
+      );
     });
   });
 });

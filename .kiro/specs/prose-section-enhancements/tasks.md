@@ -124,7 +124,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Test error handling for malformed markdown
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [-] 8. Create StylesheetEditor.vue CSS editor
+- [x] 8. Create StylesheetEditor.vue CSS editor
   - [x] 8.1 Implement StylesheetEditor component
     - Create full-screen or modal editor for CSS
     - Integrate MonacoEditor component with css language mode
@@ -149,8 +149,8 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Test cancel button discards changes
     - _Requirements: 5.1, 5.2, 5.3, 5.5, 5.6_
 
-- [ ] 9. Modify TaskView.vue to integrate ProseEditorModal
-  - [~] 9.1 Add ProseEditorModal integration to TaskView
+- [x] 9. Modify TaskView.vue to integrate ProseEditorModal
+  - [x] 9.1 Add ProseEditorModal integration to TaskView
     - Replace inline textarea with "Edit" button for prose sections
     - Add state: showProseEditor, editingProseSection
     - Implement handleEditProseSection to open modal
@@ -159,14 +159,14 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Refresh section list after save
     - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 6.1_
   
-  - [~] 9.2 Write property test for markdown input acceptance
+  - [x] 9.2 Write property test for markdown input acceptance
     - **Property 2: Markdown and HTML Input Acceptance**
     - **Validates: Requirements 2.1, 2.2**
     - Generate random markdown and HTML strings with special characters, unicode, long strings
     - Verify editor accepts and stores without modification
     - Run 100 iterations minimum
   
-  - [~] 9.3 Write integration tests for TaskView + ProseEditorModal
+  - [x] 9.3 Write integration tests for TaskView + ProseEditorModal
     - Test opening editor loads section content
     - Test saving editor updates section in list
     - Test canceling editor discards changes
