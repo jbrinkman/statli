@@ -62,7 +62,7 @@ useKeyboardShortcuts([
 </script>
 
 <template>
-  <div class="app-container" role="application" aria-label="Status Report Manager">
+  <div class="app-container" role="application" aria-label="Statli">
     <!-- Skip to main content link for screen readers -->
     <a href="#main-content" class="skip-to-main">Skip to main content</a>
 
@@ -75,7 +75,7 @@ useKeyboardShortcuts([
     <!-- Navigation Bar -->
     <nav class="nav-bar" role="navigation" aria-label="Main navigation">
       <div class="nav-content">
-        <h1 class="app-title">Status Report Manager</h1>
+        <h1 class="app-title">Statli</h1>
         <div class="nav-actions">
           <button
             @click="showShortcutsHelp = true"
