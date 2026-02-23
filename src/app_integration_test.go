@@ -44,6 +44,7 @@ func setupIntegrationTest(t *testing.T) *App {
 		recipients_to TEXT NOT NULL DEFAULT '',
 		recipients_cc TEXT NOT NULL DEFAULT '',
 		recipients_bcc TEXT NOT NULL DEFAULT '',
+		master_stylesheet TEXT NOT NULL DEFAULT '',
 		is_archived BOOLEAN NOT NULL DEFAULT 0,
 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

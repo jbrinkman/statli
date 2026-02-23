@@ -34,8 +34,8 @@ func (r *ProjectRepository) Create(project *models.Project) error {
 		INSERT INTO projects (
 			name, filename_format, report_title_format, default_directory,
 			use_year_subfolders, recipients_to, recipients_cc, recipients_bcc,
-			is_archived, created_at, updated_at
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			master_stylesheet, is_archived, created_at, updated_at
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	now := time.Now()
@@ -49,6 +49,7 @@ func (r *ProjectRepository) Create(project *models.Project) error {
 		project.RecipientsTo,
 		project.RecipientsCC,
 		project.RecipientsBCC,
+		project.MasterStylesheet,
 		project.IsArchived,
 		now,
 		now,
@@ -92,6 +93,7 @@ func (r *ProjectRepository) Update(project *models.Project) error {
 			recipients_to = ?,
 			recipients_cc = ?,
 			recipients_bcc = ?,
+			master_stylesheet = ?,
 			is_archived = ?,
 			updated_at = ?
 		WHERE id = ?
@@ -108,6 +110,7 @@ func (r *ProjectRepository) Update(project *models.Project) error {
 		project.RecipientsTo,
 		project.RecipientsCC,
 		project.RecipientsBCC,
+		project.MasterStylesheet,
 		project.IsArchived,
 		now,
 		project.ID,
@@ -144,7 +147,7 @@ func (r *ProjectRepository) GetByID(id int64) (*models.Project, error) {
 	query := `
 		SELECT id, name, filename_format, report_title_format, default_directory,
 			use_year_subfolders, recipients_to, recipients_cc, recipients_bcc,
-			is_archived, created_at, updated_at
+			master_stylesheet, is_archived, created_at, updated_at
 		FROM projects
 		WHERE id = ?
 	`
@@ -160,6 +163,7 @@ func (r *ProjectRepository) GetByID(id int64) (*models.Project, error) {
 		&project.RecipientsTo,
 		&project.RecipientsCC,
 		&project.RecipientsBCC,
+		&project.MasterStylesheet,
 		&project.IsArchived,
 		&project.CreatedAt,
 		&project.UpdatedAt,
@@ -182,7 +186,7 @@ func (r *ProjectRepository) ListActive() ([]*models.Project, error) {
 	query := `
 		SELECT id, name, filename_format, report_title_format, default_directory,
 			use_year_subfolders, recipients_to, recipients_cc, recipients_bcc,
-			is_archived, created_at, updated_at
+			master_stylesheet, is_archived, created_at, updated_at
 		FROM projects
 		WHERE is_archived = 0
 		ORDER BY name ASC
@@ -208,6 +212,7 @@ func (r *ProjectRepository) ListActive() ([]*models.Project, error) {
 			&project.RecipientsTo,
 			&project.RecipientsCC,
 			&project.RecipientsBCC,
+			&project.MasterStylesheet,
 			&project.IsArchived,
 			&project.CreatedAt,
 			&project.UpdatedAt,
@@ -237,7 +242,7 @@ func (r *ProjectRepository) ListArchived() ([]*models.Project, error) {
 	query := `
 		SELECT id, name, filename_format, report_title_format, default_directory,
 			use_year_subfolders, recipients_to, recipients_cc, recipients_bcc,
-			is_archived, created_at, updated_at
+			master_stylesheet, is_archived, created_at, updated_at
 		FROM projects
 		WHERE is_archived = 1
 		ORDER BY name ASC
@@ -263,6 +268,7 @@ func (r *ProjectRepository) ListArchived() ([]*models.Project, error) {
 			&project.RecipientsTo,
 			&project.RecipientsCC,
 			&project.RecipientsBCC,
+			&project.MasterStylesheet,
 			&project.IsArchived,
 			&project.CreatedAt,
 			&project.UpdatedAt,

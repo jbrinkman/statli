@@ -341,3 +341,26 @@ func (a *App) SelectDirectory() (string, error) {
 	}
 	return selection, nil
 }
+
+// GetProjectStylesheet retrieves the master stylesheet for a project
+func (a *App) GetProjectStylesheet(projectID int64) (string, error) {
+	a.logger.Debug("getting project stylesheet",
+		zap.Int64("project_id", projectID),
+	)
+
+	project, err := a.projectService.GetProject(projectID)
+	if err != nil {
+		a.logger.Error("failed to get project for stylesheet",
+			zap.Error(err),
+			zap.Int64("project_id", projectID),
+		)
+		return "", err
+	}
+
+	a.logger.Debug("retrieved project stylesheet",
+		zap.Int64("project_id", projectID),
+		zap.Int("stylesheet_length", len(project.MasterStylesheet)),
+	)
+
+	return project.MasterStylesheet, nil
+}

@@ -58,6 +58,10 @@ export function GetProjectService() {
   return window['go']['main']['App']['GetProjectService']();
 }
 
+export function GetProjectStylesheet(arg1) {
+  return window['go']['main']['App']['GetProjectStylesheet'](arg1);
+}
+
 export function GetReportSection(arg1) {
   return window['go']['main']['App']['GetReportSection'](arg1);
 }

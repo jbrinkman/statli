@@ -31,6 +31,8 @@ export function GetProject(arg1:number):Promise<models.Project>;
 
 export function GetProjectService():Promise<services.ProjectService>;
 
+export function GetProjectStylesheet(arg1:number):Promise<string>;
+
 export function GetReportSection(arg1:number):Promise<models.ReportSection>;
 
 export function GetReportService():Promise<services.ReportService>;

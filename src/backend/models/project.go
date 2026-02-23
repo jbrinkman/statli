@@ -13,6 +13,7 @@ type Project struct {
 	RecipientsTo      string    `json:"recipients_to"`
 	RecipientsCC      string    `json:"recipients_cc"`
 	RecipientsBCC     string    `json:"recipients_bcc"`
+	MasterStylesheet  string    `json:"master_stylesheet"`
 	IsArchived        bool      `json:"is_archived"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`

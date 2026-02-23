@@ -10,6 +10,7 @@ export namespace models {
 	    recipients_to: string;
 	    recipients_cc: string;
 	    recipients_bcc: string;
+	    master_stylesheet: string;
 	    is_archived: boolean;
 	    // Go type: time
 	    created_at: any;
@@ -31,6 +32,7 @@ export namespace models {
 	        this.recipients_to = source["recipients_to"];
 	        this.recipients_cc = source["recipients_cc"];
 	        this.recipients_bcc = source["recipients_bcc"];
+	        this.master_stylesheet = source["master_stylesheet"];
 	        this.is_archived = source["is_archived"];
 	        this.created_at = this.convertValues(source["created_at"], null);
 	        this.updated_at = this.convertValues(source["updated_at"], null);

@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"src/backend/models"
 	"testing"
 )
 
@@ -147,5 +148,98 @@ func TestGetServiceMethods(t *testing.T) {
 	}
 	if exportService != app.exportService {
 		t.Error("GetExportService() returned different instance")
+	}
+}
+
+func TestGetProjectStylesheet(t *testing.T) {
+	// Create a temporary directory for test database
+	tempDir := t.TempDir()
+
+	// Set environment variable for database location
+	dbPath := filepath.Join(tempDir, "test.db")
+	os.Setenv("STATUS_REPORT_DB_PATH", dbPath)
+	defer os.Unsetenv("STATUS_REPORT_DB_PATH")
+
+	app := NewApp()
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// Create a test project with a stylesheet
+	project := &models.Project{
+		Name:             "Test Project",
+		MasterStylesheet: ".prose-content { color: blue; }",
+	}
+
+	err := app.CreateProject(project)
+	if err != nil {
+		t.Fatalf("failed to create project: %v", err)
+	}
+
+	// Test GetProjectStylesheet with existing project
+	stylesheet, err := app.GetProjectStylesheet(project.ID)
+	if err != nil {
+		t.Fatalf("GetProjectStylesheet() failed: %v", err)
+	}
+
+	if stylesheet != ".prose-content { color: blue; }" {
+		t.Errorf("expected stylesheet '.prose-content { color: blue; }', got '%s'", stylesheet)
+	}
+}
+
+func TestGetProjectStylesheet_NotFound(t *testing.T) {
+	// Create a temporary directory for test database
+	tempDir := t.TempDir()
+
+	// Set environment variable for database location
+	dbPath := filepath.Join(tempDir, "test.db")
+	os.Setenv("STATUS_REPORT_DB_PATH", dbPath)
+	defer os.Unsetenv("STATUS_REPORT_DB_PATH")
+
+	app := NewApp()
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// Test GetProjectStylesheet with non-existing project
+	_, err := app.GetProjectStylesheet(999)
+	if err == nil {
+		t.Error("expected error for non-existent project")
+	}
+}
+
+func TestGetProjectStylesheet_Empty(t *testing.T) {
+	// Create a temporary directory for test database
+	tempDir := t.TempDir()
+
+	// Set environment variable for database location
+	dbPath := filepath.Join(tempDir, "test.db")
+	os.Setenv("STATUS_REPORT_DB_PATH", dbPath)
+	defer os.Unsetenv("STATUS_REPORT_DB_PATH")
+
+	app := NewApp()
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// Create a test project without a stylesheet (empty string)
+	project := &models.Project{
+		Name:             "Test Project",
+		MasterStylesheet: "",
+	}
+
+	err := app.CreateProject(project)
+	if err != nil {
+		t.Fatalf("failed to create project: %v", err)
+	}
+
+	// Test GetProjectStylesheet returns empty string
+	stylesheet, err := app.GetProjectStylesheet(project.ID)
+	if err != nil {
+		t.Fatalf("GetProjectStylesheet() failed: %v", err)
+	}
+
+	if stylesheet != "" {
+		t.Errorf("expected empty stylesheet, got '%s'", stylesheet)
 	}
 }
