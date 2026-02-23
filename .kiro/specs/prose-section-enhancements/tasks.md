@@ -16,7 +16,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 4.1, 5.5_
 
 - [ ] 2. Create database migration for master_stylesheet column
-  - [~] 2.1 Add master_stylesheet column to projects table
+  - [x] 2.1 Add master_stylesheet column to projects table
     - Create SQL migration file to add TEXT column with empty string default
     - _Requirements: 5.1, 5.2_
   

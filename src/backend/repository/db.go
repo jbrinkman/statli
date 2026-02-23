@@ -100,6 +100,7 @@ func (db *DB) initSchema() error {
 		recipients_cc TEXT NOT NULL DEFAULT '',
 		recipients_bcc TEXT NOT NULL DEFAULT '',
 		is_archived BOOLEAN NOT NULL DEFAULT 0,
+		master_stylesheet TEXT NOT NULL DEFAULT '',
 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);
@@ -207,6 +208,12 @@ func (db *DB) initSchema() error {
 		return fmt.Errorf("failed to create schema: %w", err)
 	}
 
+	// Run migrations for existing databases
+	if err := db.runMigrations(); err != nil {
+		db.Logger.Error("failed to run migrations", zap.Error(err))
+		return fmt.Errorf("failed to run migrations: %w", err)
+	}
+
 	db.Logger.Info("database schema initialized successfully")
 	return nil
 }
@@ -217,5 +224,71 @@ func (db *DB) Close() error {
 		db.Logger.Info("closing database connection")
 		return db.Conn.Close()
 	}
+	return nil
+}
+
+// runMigrations applies database migrations for existing databases
+func (db *DB) runMigrations() error {
+	db.Logger.Info("running database migrations")
+
+	// Migration 1: Add master_stylesheet column to projects table
+	if err := db.addColumnIfNotExists("projects", "master_stylesheet", "TEXT NOT NULL DEFAULT ''"); err != nil {
+		return fmt.Errorf("failed to add master_stylesheet column: %w", err)
+	}
+
+	db.Logger.Info("database migrations completed successfully")
+	return nil
+}
+
+// addColumnIfNotExists adds a column to a table if it doesn't already exist
+func (db *DB) addColumnIfNotExists(tableName, columnName, columnDef string) error {
+	// Check if column exists
+	query := fmt.Sprintf("PRAGMA table_info(%s)", tableName)
+	rows, err := db.Conn.Query(query)
+	if err != nil {
+		return fmt.Errorf("failed to query table info: %w", err)
+	}
+	defer rows.Close()
+
+	columnExists := false
+	for rows.Next() {
+		var cid int
+		var name string
+		var dataType string
+		var notNull int
+		var defaultValue sql.NullString
+		var pk int
+
+		if err := rows.Scan(&cid, &name, &dataType, &notNull, &defaultValue, &pk); err != nil {
+			return fmt.Errorf("failed to scan table info: %w", err)
+		}
+
+		if name == columnName {
+			columnExists = true
+			break
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("error iterating table info: %w", err)
+	}
+
+	// Add column if it doesn't exist
+	if !columnExists {
+		alterQuery := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s", tableName, columnName, columnDef)
+		if _, err := db.Conn.Exec(alterQuery); err != nil {
+			return fmt.Errorf("failed to add column: %w", err)
+		}
+		db.Logger.Info("added column to table",
+			zap.String("table", tableName),
+			zap.String("column", columnName),
+		)
+	} else {
+		db.Logger.Debug("column already exists",
+			zap.String("table", tableName),
+			zap.String("column", columnName),
+		)
+	}
+
 	return nil
 }
