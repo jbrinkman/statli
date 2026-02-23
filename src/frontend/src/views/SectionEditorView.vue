@@ -82,7 +82,7 @@ const emit = defineEmits<{
 }>();
 
 // Use composables
-const { updateReportSection } = useReports();
+const { getReportSection, updateReportSection } = useReports();
 
 // Local state
 const loading = ref(true);
@@ -107,12 +107,8 @@ const loadSection = async (id: number) => {
     error.value = null;
 
     try {
-        const app = (window as any).go?.main?.App;
-        if (!app || typeof app.GetReportSection !== 'function') {
-            throw new Error('App not available');
-        }
-
-        const sectionData = await app.GetReportSection(id);
+        // Use the useReports composable to load section data
+        const sectionData = await getReportSection(id);
         if (!sectionData) {
             throw new Error('Section not found');
         }
