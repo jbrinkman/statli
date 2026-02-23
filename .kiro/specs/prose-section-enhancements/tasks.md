@@ -38,7 +38,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Return error if update fails
     - _Requirements: 5.4_
   
-  - [~] 3.3 Write unit tests for stylesheet API methods
+  - [x] 3.3 Write unit tests for stylesheet API methods
     - Test GetProjectStylesheet with existing and non-existing projects
     - Test UpdateProjectStylesheet with valid and invalid project IDs
     - Test empty stylesheet handling

@@ -158,6 +158,10 @@ export function UpdateProject(arg1) {
   return window['go']['main']['App']['UpdateProject'](arg1);
 }
 
+export function UpdateProjectStylesheet(arg1, arg2) {
+  return window['go']['main']['App']['UpdateProjectStylesheet'](arg1, arg2);
+}
+
 export function UpdateReportSection(arg1) {
   return window['go']['main']['App']['UpdateReportSection'](arg1);
 }

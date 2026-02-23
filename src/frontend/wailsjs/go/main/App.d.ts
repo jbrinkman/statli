@@ -81,6 +81,8 @@ export function SoftDeleteTask(arg1:number):Promise<void>;
 
 export function UpdateProject(arg1:models.Project):Promise<void>;
 
+export function UpdateProjectStylesheet(arg1:number,arg2:string):Promise<void>;
+
 export function UpdateReportSection(arg1:models.ReportSection):Promise<void>;
 
 export function UpdateStatusDefinition(arg1:models.StatusDefinition):Promise<void>;
