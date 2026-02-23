@@ -108,17 +108,20 @@ useKeyboardShortcuts([
       <ProjectView 
         v-if="currentView === 'projects'"
         @navigate-to-tasks="handleNavigateToTasks"
+        data-view="projects"
       />
       <TaskView 
         v-else-if="currentView === 'tasks' && selectedProject"
         :project="selectedProject"
         @navigate-to-report="handleNavigateToReport"
         @navigate-to-projects="handleNavigateToProjects"
+        data-view="tasks"
       />
       <ReportView 
         v-else-if="currentView === 'report' && selectedProject"
         :project="selectedProject"
         @navigate-to-tasks="() => handleNavigateToTasks(selectedProject!)"
+        data-view="report"
       />
     </main>
   </div>

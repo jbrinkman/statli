@@ -40,6 +40,7 @@
           role="listitem"
           :aria-label="`Select project ${project.name}, created ${formatDate(project.created_at)}`"
           :aria-current="selectedProjectId === project.id ? 'true' : undefined"
+          :data-project-id="project.id"
         >
           <div class="project-name">{{ project.name }}</div>
           <div class="project-meta">

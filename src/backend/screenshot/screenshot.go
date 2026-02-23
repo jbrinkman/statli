@@ -237,3 +237,41 @@ type ScreenshotStep struct {
 	// Description - human-readable description of this step
 	Description string
 }
+
+// NavigateToView returns a chromedp action that navigates to a specific view in the app
+func NavigateToView(view string, projectID int) chromedp.Action {
+	return chromedp.ActionFunc(func(ctx context.Context) error {
+		switch view {
+		case "tasks":
+			// Click on the project button to navigate to tasks view
+			selector := fmt.Sprintf(`button[data-project-id="%d"]`, projectID)
+			if err := chromedp.Click(selector, chromedp.ByQuery).Do(ctx); err != nil {
+				return fmt.Errorf("failed to click project %d: %w", projectID, err)
+			}
+			// Wait for tasks view to load
+			return chromedp.WaitVisible(`[data-view="tasks"]`, chromedp.ByQuery).Do(ctx)
+
+		case "report":
+			// First navigate to tasks view
+			tasksSelector := fmt.Sprintf(`button[data-project-id="%d"]`, projectID)
+			if err := chromedp.Click(tasksSelector, chromedp.ByQuery).Do(ctx); err != nil {
+				return fmt.Errorf("failed to click project %d: %w", projectID, err)
+			}
+			// Wait for tasks view
+			if err := chromedp.WaitVisible(`[data-view="tasks"]`, chromedp.ByQuery).Do(ctx); err != nil {
+				return fmt.Errorf("failed to wait for tasks view: %w", err)
+			}
+			// Small delay to ensure tasks view is fully loaded
+			chromedp.Sleep(500 * time.Millisecond).Do(ctx)
+			// Click on generate report button
+			if err := chromedp.Click(`button[aria-label*="Generate"]`, chromedp.ByQuery).Do(ctx); err != nil {
+				return fmt.Errorf("failed to click generate report button: %w", err)
+			}
+			// Wait for report view to load
+			return chromedp.WaitVisible(`[data-view="report"]`, chromedp.ByQuery).Do(ctx)
+
+		default:
+			return fmt.Errorf("unknown view: %s", view)
+		}
+	})
+}

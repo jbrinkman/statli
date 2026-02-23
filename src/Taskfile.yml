@@ -101,6 +101,16 @@ tasks:
     requires:
       vars: [OUTPUT]
 
+  screenshot-view:
+    desc: Take a screenshot of a specific view (usage - task screenshot-view VIEW=tasks PROJECT=1)
+    deps:
+      - screenshot-tool
+      - dev-background
+    cmds:
+      - ./screenshot-tool -view {{.VIEW}} -project {{.PROJECT}}
+    requires:
+      vars: [VIEW, PROJECT]
+
   clean:
     desc: Clean build artifacts
     cmds:
