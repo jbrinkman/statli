@@ -55,6 +55,40 @@
         </div>
       </div>
 
+      <!-- Show SectionForm when creating/editing section -->
+      <div v-if="showSectionForm" class="form-overlay" role="dialog" aria-modal="true"
+        aria-labelledby="section-form-title">
+        <div class="form-container section-form-dialog">
+          <div class="form-header">
+            <h2 id="section-form-title">{{ editingSection ? 'Edit Section' : 'Create Section' }}</h2>
+            <button @click="handleSectionFormCancel" class="btn-close">×</button>
+          </div>
+          <form @submit.prevent="handleSectionFormSubmit" class="simple-form">
+            <div class="form-group">
+              <label for="section-name">Section Name *</label>
+              <input id="section-name" v-model="sectionFormData.name" type="text" required class="form-input"
+                placeholder="e.g., Completed Tasks" />
+            </div>
+            <div class="form-group">
+              <label for="section-type">Section Type *</label>
+              <select id="section-type" v-model="sectionFormData.type" required class="form-input">
+                <option value="status">Status (Task List)</option>
+                <option value="prose">Prose (Free Text)</option>
+              </select>
+            </div>
+            <div v-if="sectionFormData.type === 'prose'" class="form-group">
+              <label for="section-content">Content</label>
+              <textarea id="section-content" v-model="sectionFormData.content" class="form-textarea" rows="4"
+                placeholder="Enter section content..."></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" @click="handleSectionFormCancel" class="btn-secondary">Cancel</button>
+              <button type="submit" class="btn-primary">{{ editingSection ? 'Update' : 'Create' }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- Section-Centric View -->
       <div class="sections-view">
         <!-- Sections Header -->
@@ -239,6 +273,13 @@ const currentSectionId = ref<number | null>(null);
 const allTasks = ref<Task[]>([]);
 const allSubtasks = ref<Subtask[]>([]);
 
+// Section form data
+const sectionFormData = ref({
+  name: '',
+  type: 'status' as 'prose' | 'status',
+  content: '',
+});
+
 // Computed
 const project = computed(() => props.project);
 
@@ -334,13 +375,73 @@ const loadAllTasks = async () => {
 
 // Section handlers
 const handleCreateSection = () => {
-  // TODO: Implement section form
-  alert('Section creation form coming soon. For now, use the Report View to manage sections.');
+  sectionFormData.value = {
+    name: '',
+    type: 'status',
+    content: '',
+  };
+  editingSection.value = null;
+  showSectionForm.value = true;
 };
 
 const handleEditSection = (section: ReportSection) => {
-  // TODO: Implement section form
-  alert('Section editing form coming soon. For now, use the Report View to manage sections.');
+  sectionFormData.value = {
+    name: section.name,
+    type: section.type as 'prose' | 'status',
+    content: section.content,
+  };
+  editingSection.value = section;
+  showSectionForm.value = true;
+};
+
+const handleSectionFormSubmit = async () => {
+  if (!sectionFormData.value.name.trim()) {
+    alert('Section name is required');
+    return;
+  }
+
+  try {
+    const app = (window as any).go?.main?.App;
+    if (!app) {
+      throw new Error('App not available');
+    }
+
+    if (editingSection.value) {
+      // Update existing section
+      await app.UpdateReportSection({
+        ...editingSection.value,
+        name: sectionFormData.value.name.trim(),
+        type: sectionFormData.value.type,
+        content: sectionFormData.value.content.trim(),
+      });
+    } else {
+      // Create new section
+      const maxOrder = reportSections.value.length > 0
+        ? Math.max(...reportSections.value.map(s => s.order))
+        : 0;
+
+      await app.CreateReportSection({
+        project_id: props.project.id,
+        name: sectionFormData.value.name.trim(),
+        type: sectionFormData.value.type,
+        content: sectionFormData.value.content.trim(),
+        order: maxOrder + 1,
+        is_enabled: true,
+      });
+    }
+
+    showSectionForm.value = false;
+    editingSection.value = null;
+    await loadReportSections(props.project.id);
+  } catch (err: any) {
+    console.error('Failed to save section:', err);
+    alert(`Failed to save section: ${err.message || 'Unknown error'}`);
+  }
+};
+
+const handleSectionFormCancel = () => {
+  showSectionForm.value = false;
+  editingSection.value = null;
 };
 
 const handleDeleteSection = async (sectionId: number) => {
@@ -1013,5 +1114,132 @@ useKeyboardShortcuts([
   background-color: white;
   border-radius: 4px;
   border: 1px dashed #e0e0e0;
+}
+
+/* Section Form Styles */
+.section-form-dialog {
+  max-width: 500px;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.form-header h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.btn-close {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.simple-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-input,
+.form-textarea {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #111827;
+  background-color: #ffffff;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-secondary,
+.btn-primary {
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btn-primary {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #1557b0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+  transform: scale(0.98);
 }
 </style>
