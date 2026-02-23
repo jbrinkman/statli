@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import { useReports, type ReportSection } from '../composables/useReports';
 
@@ -258,6 +258,18 @@ const handleKeyDown = (event: KeyboardEvent) => {
         handleCancel();
     }
 };
+
+// Watch for section type changes to manage auto-save
+watch(sectionType, (newType, oldType) => {
+    // Stop auto-save when switching away from prose
+    if (oldType === 'prose' && newType === 'status') {
+        stopAutoSave();
+    }
+    // Start auto-save when switching to prose
+    else if (oldType === 'status' && newType === 'prose') {
+        startAutoSave();
+    }
+});
 
 // Lifecycle hooks
 onMounted(async () => {

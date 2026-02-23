@@ -38,7 +38,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Handle name change events
     - _Requirements: 4.1_
   
-  - [~] 3.2 Implement section type selector
+  - [x] 3.2 Implement section type selector
     - Create dropdown with "prose" and "status" options
     - Bind to sectionType reactive state
     - Handle type change events
