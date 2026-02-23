@@ -20,7 +20,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Create SQL migration file to add TEXT column with empty string default
     - _Requirements: 5.1, 5.2_
   
-  - [~] 2.2 Apply migration to database
+  - [x] 2.2 Apply migration to database
     - Execute migration against SQLite database
     - Verify column exists with correct type and default
     - _Requirements: 5.1, 5.2_
