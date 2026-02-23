@@ -108,15 +108,15 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
 - [x] 7. Checkpoint - Ensure basic editing works
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 8. Implement change detection mechanism
-  - [~] 8.1 Create hasUnsavedChanges method
+- [x] 8. Implement change detection mechanism
+  - [x] 8.1 Create hasUnsavedChanges method
     - Compare current name with original name
     - Compare current type with original type
     - Compare current content with original content (for prose)
     - Return true if any differences exist
     - _Requirements: 2.5, 3.5, 4.6, 8.8_
   
-  - [~] 8.2 Write property test for change detection accuracy
+  - [x] 8.2 Write property test for change detection accuracy
     - **Property 5: Change Detection Accuracy**
     - **Validates: Requirements 2.5, 3.5, 4.6, 8.8**
 
