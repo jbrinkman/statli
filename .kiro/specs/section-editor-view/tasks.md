@@ -22,7 +22,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Handle loading states and errors
     - _Requirements: 1.4, 9.5_
   
-  - [~] 2.2 Write property test for section data loading
+  - [x] 2.2 Write property test for section data loading
     - **Property 1: Section Data Loading**
     - **Validates: Requirements 1.4, 9.5**
   
