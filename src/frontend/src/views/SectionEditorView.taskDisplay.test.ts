@@ -4,6 +4,7 @@ import { nextTick } from "vue";
 import * as fc from "fast-check";
 import SectionEditorView from "./SectionEditorView.vue";
 import type { ReportSection } from "../composables/useReports";
+import type { Task } from "../composables/useTasks";
 
 // Mock MonacoEditor component
 vi.mock("../components/MonacoEditor.vue", () => ({
@@ -78,7 +79,7 @@ vi.mock("../composables/useTasks", () => ({
   }),
 }));
 
-describe("SectionEditorView - Content Area Component Selection", () => {
+describe("SectionEditorView - Task Display Completeness", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
@@ -90,23 +91,23 @@ describe("SectionEditorView - Content Area Component Selection", () => {
     vi.restoreAllMocks();
   });
 
-  describe("Property 2: Content Area Component Selection", () => {
+  describe("Property 23: Task Display Completeness", () => {
     /**
-     * **Validates: Requirements 2.1, 3.1**
+     * **Validates: Requirements 3.2**
      *
-     * Property: For any section, the content area should display the Monaco Editor
-     * when section type is "prose" and the Task List when section type is "status".
+     * Property: For any status section with a set of tasks, the TaskList component
+     * should receive and display all tasks associated with that section.
      */
-    it("should display Monaco Editor for prose sections and Task List for status sections", async () => {
+    it("should pass all tasks for the section to TaskList component", async () => {
       await fc.assert(
         fc.asyncProperty(
-          // Generate arbitrary section data with both prose and status types
+          // Generate a status section
           fc.record({
             id: fc.integer({ min: 1, max: 10000 }),
             project_id: fc.integer({ min: 1, max: 1000 }),
             name: fc.string({ minLength: 1, maxLength: 100 }),
-            type: fc.constantFrom("prose", "status"),
-            content: fc.string({ maxLength: 5000 }),
+            type: fc.constant("status"),
+            content: fc.string({ maxLength: 1000 }),
             order: fc.integer({ min: 0, max: 100 }),
             is_enabled: fc.boolean(),
             created_at: fc
@@ -116,11 +117,52 @@ describe("SectionEditorView - Content Area Component Selection", () => {
               .integer({ min: 1577836800000, max: 1924905600000 })
               .map((ts) => new Date(ts).toISOString()),
           }),
-          async (sectionData: ReportSection) => {
-            // Setup: Mock the backend to return the generated section data
-            mockGetReportSection.mockResolvedValue(sectionData);
+          // Generate an array of tasks for this section
+          fc.array(
+            fc.record({
+              id: fc.integer({ min: 1, max: 100000 }),
+              project_id: fc.integer({ min: 1, max: 1000 }),
+              report_section_id: fc.integer({ min: 1, max: 10000 }),
+              name: fc.string({ minLength: 1, maxLength: 200 }),
+              status: fc.constantFrom(
+                "Not Started",
+                "In Progress",
+                "Completed",
+                "Blocked",
+              ),
+              expected_completion_date: fc.option(
+                fc
+                  .integer({ min: 1577836800000, max: 1924905600000 })
+                  .map((ts) => new Date(ts).toISOString()),
+                { nil: null },
+              ),
+              url: fc.option(fc.webUrl(), { nil: "" }),
+              notes: fc.string({ maxLength: 500 }),
+              priority: fc.integer({ min: 1, max: 100 }),
+              is_deleted: fc.constant(false),
+              is_archived: fc.constant(false),
+              created_at: fc
+                .integer({ min: 1577836800000, max: 1924905600000 })
+                .map((ts) => new Date(ts).toISOString()),
+              updated_at: fc
+                .integer({ min: 1577836800000, max: 1924905600000 })
+                .map((ts) => new Date(ts).toISOString()),
+            }),
+            { minLength: 0, maxLength: 20 },
+          ),
+          async (sectionData: ReportSection, generatedTasks: Task[]) => {
+            // Ensure all tasks belong to this section
+            const tasks = generatedTasks.map((task) => ({
+              ...task,
+              report_section_id: sectionData.id,
+              project_id: sectionData.project_id,
+            }));
 
-            // Execute: Mount the component with the section ID
+            // Setup: Mock the backend to return the section and tasks
+            mockGetReportSection.mockResolvedValue(sectionData);
+            mockTasks.value = tasks;
+
+            // Execute: Mount the component
             const wrapper = mount(SectionEditorView, {
               props: {
                 sectionId: sectionData.id,
@@ -131,100 +173,23 @@ describe("SectionEditorView - Content Area Component Selection", () => {
             await nextTick();
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            // Verify: Content area exists
-            const contentArea = wrapper.find(".content-area");
-            expect(contentArea.exists()).toBe(true);
-
-            if (sectionData.type === "prose") {
-              // Verify: Monaco Editor is displayed for prose sections
-              const monacoEditor = wrapper.findComponent({
-                name: "MonacoEditor",
-              });
-              expect(monacoEditor.exists()).toBe(true);
-
-              // Verify: Task List is NOT displayed
-              const taskList = wrapper.findComponent({ name: "TaskList" });
-              expect(taskList.exists()).toBe(false);
-
-              // Verify: Monaco Editor has correct props
-              expect(monacoEditor.props("language")).toBe("markdown");
-              expect(monacoEditor.props("modelValue")).toBe(
-                sectionData.content,
-              );
-            } else if (sectionData.type === "status") {
-              // Verify: Task List is displayed for status sections
-              const taskList = wrapper.findComponent({ name: "TaskList" });
-              expect(taskList.exists()).toBe(true);
-
-              // Verify: Monaco Editor is NOT displayed
-              const monacoEditor = wrapper.findComponent({
-                name: "MonacoEditor",
-              });
-              expect(monacoEditor.exists()).toBe(false);
-            }
-
-            // Cleanup
-            wrapper.unmount();
-          },
-        ),
-        { numRuns: 100 },
-      );
-    });
-
-    it("should display only one component type at a time in the content area", async () => {
-      await fc.assert(
-        fc.asyncProperty(
-          // Generate arbitrary section data
-          fc.record({
-            id: fc.integer({ min: 1, max: 10000 }),
-            project_id: fc.integer({ min: 1, max: 1000 }),
-            name: fc.string({ minLength: 1, maxLength: 100 }),
-            type: fc.constantFrom("prose", "status"),
-            content: fc.string({ maxLength: 5000 }),
-            order: fc.integer({ min: 0, max: 100 }),
-            is_enabled: fc.boolean(),
-            created_at: fc
-              .integer({ min: 1577836800000, max: 1924905600000 })
-              .map((ts) => new Date(ts).toISOString()),
-            updated_at: fc
-              .integer({ min: 1577836800000, max: 1924905600000 })
-              .map((ts) => new Date(ts).toISOString()),
-          }),
-          async (sectionData: ReportSection) => {
-            // Setup: Mock the backend to return the generated section data
-            mockGetReportSection.mockResolvedValue(sectionData);
-
-            // Execute: Mount the component with the section ID
-            const wrapper = mount(SectionEditorView, {
-              props: {
-                sectionId: sectionData.id,
-              },
-            });
-
-            // Wait for async data loading
-            await nextTick();
-            await new Promise((resolve) => setTimeout(resolve, 0));
-
-            // Verify: Exactly one of Monaco Editor or Task List is displayed
-            const monacoEditor = wrapper.findComponent({
-              name: "MonacoEditor",
-            });
+            // Verify: TaskList component is rendered for status section
             const taskList = wrapper.findComponent({ name: "TaskList" });
+            expect(taskList.exists()).toBe(true);
 
-            // XOR: Either Monaco Editor exists OR Task List exists, but not both
-            const monacoExists = monacoEditor.exists();
-            const taskListExists = taskList.exists();
+            // Verify: TaskList receives the tasks prop
+            expect(taskList.props("tasks")).toBeDefined();
 
-            expect(monacoExists !== taskListExists).toBe(true);
+            // Verify: TaskList receives all tasks for this section
+            // The tasks prop should be the ref object with value property
+            const receivedTasks = taskList.props("tasks");
+            expect(receivedTasks).toEqual(mockTasks);
 
-            // Verify: The correct component is displayed based on type
-            if (sectionData.type === "prose") {
-              expect(monacoExists).toBe(true);
-              expect(taskListExists).toBe(false);
-            } else {
-              expect(monacoExists).toBe(false);
-              expect(taskListExists).toBe(true);
-            }
+            // Verify: TaskList receives the section in sections prop
+            const receivedSections = taskList.props("sections");
+            expect(receivedSections).toBeDefined();
+            expect(receivedSections).toHaveLength(1);
+            expect(receivedSections[0].id).toBe(sectionData.id);
 
             // Cleanup
             wrapper.unmount();
@@ -234,16 +199,16 @@ describe("SectionEditorView - Content Area Component Selection", () => {
       );
     });
 
-    it("should fill the entire content area with the appropriate component", async () => {
+    it("should handle empty task list for status sections", async () => {
       await fc.assert(
         fc.asyncProperty(
-          // Generate arbitrary section data
+          // Generate a status section
           fc.record({
             id: fc.integer({ min: 1, max: 10000 }),
             project_id: fc.integer({ min: 1, max: 1000 }),
             name: fc.string({ minLength: 1, maxLength: 100 }),
-            type: fc.constantFrom("prose", "status"),
-            content: fc.string({ maxLength: 5000 }),
+            type: fc.constant("status"),
+            content: fc.string({ maxLength: 1000 }),
             order: fc.integer({ min: 0, max: 100 }),
             is_enabled: fc.boolean(),
             created_at: fc
@@ -254,10 +219,11 @@ describe("SectionEditorView - Content Area Component Selection", () => {
               .map((ts) => new Date(ts).toISOString()),
           }),
           async (sectionData: ReportSection) => {
-            // Setup: Mock the backend to return the generated section data
+            // Setup: Mock the backend to return the section with no tasks
             mockGetReportSection.mockResolvedValue(sectionData);
+            mockTasks.value = [];
 
-            // Execute: Mount the component with the section ID
+            // Execute: Mount the component
             const wrapper = mount(SectionEditorView, {
               props: {
                 sectionId: sectionData.id,
@@ -268,20 +234,59 @@ describe("SectionEditorView - Content Area Component Selection", () => {
             await nextTick();
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            // Verify: Content area exists and has proper structure
-            const contentArea = wrapper.find(".content-area");
-            expect(contentArea.exists()).toBe(true);
+            // Verify: TaskList component is still rendered
+            const taskList = wrapper.findComponent({ name: "TaskList" });
+            expect(taskList.exists()).toBe(true);
 
-            // Verify: The component is a direct child of content area
-            if (sectionData.type === "prose") {
-              const monacoEditor = contentArea.findComponent({
-                name: "MonacoEditor",
-              });
-              expect(monacoEditor.exists()).toBe(true);
-            } else {
-              const taskList = contentArea.findComponent({ name: "TaskList" });
-              expect(taskList.exists()).toBe(true);
-            }
+            // Verify: TaskList receives empty tasks array
+            const receivedTasks = taskList.props("tasks");
+            expect(receivedTasks).toEqual(mockTasks);
+
+            // Cleanup
+            wrapper.unmount();
+          },
+        ),
+        { numRuns: 100 },
+      );
+    });
+
+    it("should load tasks when section type is status", async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          // Generate a status section
+          fc.record({
+            id: fc.integer({ min: 1, max: 10000 }),
+            project_id: fc.integer({ min: 1, max: 1000 }),
+            name: fc.string({ minLength: 1, maxLength: 100 }),
+            type: fc.constant("status"),
+            content: fc.string({ maxLength: 1000 }),
+            order: fc.integer({ min: 0, max: 100 }),
+            is_enabled: fc.boolean(),
+            created_at: fc
+              .integer({ min: 1577836800000, max: 1924905600000 })
+              .map((ts) => new Date(ts).toISOString()),
+            updated_at: fc
+              .integer({ min: 1577836800000, max: 1924905600000 })
+              .map((ts) => new Date(ts).toISOString()),
+          }),
+          async (sectionData: ReportSection) => {
+            // Setup: Mock the backend to return the section
+            mockGetReportSection.mockResolvedValue(sectionData);
+            mockTasks.value = [];
+
+            // Execute: Mount the component
+            const wrapper = mount(SectionEditorView, {
+              props: {
+                sectionId: sectionData.id,
+              },
+            });
+
+            // Wait for async data loading
+            await nextTick();
+            await new Promise((resolve) => setTimeout(resolve, 0));
+
+            // Verify: loadTasksBySection was called with the section ID
+            expect(mockLoadTasksBySection).toHaveBeenCalledWith(sectionData.id);
 
             // Cleanup
             wrapper.unmount();

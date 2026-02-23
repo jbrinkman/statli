@@ -40,9 +40,12 @@
                 :placeholder="'Enter section content...'" @update:modelValue="handleContentChange" />
 
             <!-- Task List for status sections -->
-            <div v-else-if="sectionType === 'status'" class="task-list-container">
-                <p>Task list interface will be implemented in a future task</p>
-            </div>
+            <TaskList v-else-if="sectionType === 'status'" :tasks="tasksRef" :subtasks="subtasksRef"
+                :sections="sectionsForTaskList" :status-definitions="statusDefinitions" :loading="tasksLoadingRef"
+                :error="tasksErrorRef" @create-task="handleCreateTask" @edit-task="handleEditTask"
+                @delete-task="handleDeleteTask" @create-subtask="handleCreateSubtask" @edit-subtask="handleEditSubtask"
+                @delete-subtask="handleDeleteSubtask" @select-task="handleSelectTask"
+                @select-subtask="handleSelectSubtask" />
         </div>
 
         <!-- Unsaved Changes Confirmation Dialog -->
@@ -65,9 +68,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import MonacoEditor from '../components/MonacoEditor.vue';
-import { useReports, type ReportSection } from '../composables/useReports';
+import TaskList from '../components/TaskList.vue';
+import { useReports, type ReportSection, type StatusDefinition } from '../composables/useReports';
+import { useTasks, type Task, type Subtask } from '../composables/useTasks';
 
 // Props
 interface Props {
@@ -82,7 +87,20 @@ const emit = defineEmits<{
 }>();
 
 // Use composables
-const { getReportSection, updateReportSection } = useReports();
+const { getReportSection, updateReportSection, loadStatusDefinitions, statusDefinitions: statusDefs } = useReports();
+const {
+    tasks: tasksRef,
+    subtasks: subtasksRef,
+    loadTasksBySection,
+    createTask,
+    updateTask,
+    softDeleteTask,
+    createSubtask,
+    updateSubtask,
+    softDeleteSubtask,
+    loading: tasksLoadingRef,
+    error: tasksErrorRef
+} = useTasks();
 
 // Local state
 const loading = ref(true);
@@ -98,8 +116,17 @@ const sectionType = ref<'prose' | 'status'>('prose');
 const content = ref('');
 const originalContent = ref('');
 
+// Status section data
+const statusDefinitions = ref<StatusDefinition[]>([]);
+
 // Auto-save state
 const autoSaveIntervalId = ref<number | null>(null);
+
+// Computed property to wrap the current section in an array for TaskList
+const sectionsForTaskList = computed(() => {
+    if (!section.value) return [];
+    return [section.value];
+});
 
 // Load section data
 const loadSection = async (id: number) => {
@@ -119,6 +146,15 @@ const loadSection = async (id: number) => {
         sectionType.value = sectionData.type as 'prose' | 'status';
         content.value = sectionData.content || '';
         originalContent.value = sectionData.content || '';
+
+        // Load status definitions for task list
+        await loadStatusDefinitions(sectionData.project_id);
+        statusDefinitions.value = statusDefs.value;
+
+        // Load tasks if this is a status section
+        if (sectionType.value === 'status') {
+            await loadTasksBySection(id);
+        }
 
         // Restore draft from localStorage if exists (for prose sections)
         if (sectionType.value === 'prose') {
@@ -268,16 +304,98 @@ const handleKeyDown = (event: KeyboardEvent) => {
 };
 
 // Watch for section type changes to manage auto-save
-watch(sectionType, (newType, oldType) => {
+watch(sectionType, async (newType, oldType) => {
     // Stop auto-save when switching away from prose
     if (oldType === 'prose' && newType === 'status') {
         stopAutoSave();
+        // Load tasks when switching to status
+        if (section.value) {
+            await loadTasksBySection(section.value.id);
+        }
     }
     // Start auto-save when switching to prose
     else if (oldType === 'status' && newType === 'prose') {
         startAutoSave();
     }
 });
+
+// Task event handlers
+const handleCreateTask = async () => {
+    if (!section.value) return;
+
+    // For now, create a basic task - in a real app, you'd show a modal/form
+    const newTask = {
+        project_id: section.value.project_id,
+        report_section_id: section.value.id,
+        name: 'New Task',
+        status: 'Not Started',
+        expected_completion_date: null,
+        url: '',
+        notes: '',
+        priority: tasks.value.length + 1,
+        is_deleted: false,
+        is_archived: false,
+    };
+
+    try {
+        await createTask(newTask);
+    } catch (err) {
+        console.error('Failed to create task:', err);
+    }
+};
+
+const handleEditTask = async (task: Task) => {
+    // For now, just log - in a real app, you'd show an edit modal
+    console.log('Edit task:', task);
+};
+
+const handleDeleteTask = async (taskId: number) => {
+    try {
+        await softDeleteTask(taskId);
+    } catch (err) {
+        console.error('Failed to delete task:', err);
+    }
+};
+
+const handleCreateSubtask = async (task: Task) => {
+    // For now, create a basic subtask - in a real app, you'd show a modal/form
+    const newSubtask = {
+        task_id: task.id,
+        name: 'New Subtask',
+        status: 'Not Started',
+        expected_completion_date: null,
+        url: '',
+        notes: '',
+        is_deleted: false,
+    };
+
+    try {
+        await createSubtask(newSubtask);
+    } catch (err) {
+        console.error('Failed to create subtask:', err);
+    }
+};
+
+const handleEditSubtask = async (subtask: Subtask) => {
+    // For now, just log - in a real app, you'd show an edit modal
+    console.log('Edit subtask:', subtask);
+};
+
+const handleDeleteSubtask = async (subtaskId: number) => {
+    try {
+        await softDeleteSubtask(subtaskId);
+    } catch (err) {
+        console.error('Failed to delete subtask:', err);
+    }
+};
+
+const handleSelectTask = (task: Task) => {
+    console.log('Selected task:', task);
+};
+
+const handleSelectSubtask = (subtask: Subtask) => {
+    console.log('Selected subtask:', subtask);
+};
 
 // Lifecycle hooks
 onMounted(async () => {

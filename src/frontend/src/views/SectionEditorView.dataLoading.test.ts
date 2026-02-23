@@ -16,14 +16,65 @@ vi.mock("../components/MonacoEditor.vue", () => ({
   },
 }));
 
+// Mock TaskList component
+vi.mock("../components/TaskList.vue", () => ({
+  default: {
+    name: "TaskList",
+    template: '<div class="mock-task-list">Task List</div>',
+    props: [
+      "tasks",
+      "subtasks",
+      "sections",
+      "statusDefinitions",
+      "loading",
+      "error",
+    ],
+    emits: [
+      "create-task",
+      "edit-task",
+      "delete-task",
+      "create-subtask",
+      "edit-subtask",
+      "delete-subtask",
+      "select-task",
+      "select-subtask",
+    ],
+  },
+}));
+
 // Mock useReports composable
 const mockGetReportSection = vi.fn();
 const mockUpdateReportSection = vi.fn();
+const mockLoadStatusDefinitions = vi.fn();
+const mockStatusDefinitions = { value: [] };
 
 vi.mock("../composables/useReports", () => ({
   useReports: () => ({
     getReportSection: mockGetReportSection,
     updateReportSection: mockUpdateReportSection,
+    loadStatusDefinitions: mockLoadStatusDefinitions,
+    statusDefinitions: mockStatusDefinitions,
+  }),
+}));
+
+// Mock useTasks composable
+const mockLoadTasksBySection = vi.fn();
+const mockTasks = { value: [] };
+const mockSubtasks = { value: [] };
+
+vi.mock("../composables/useTasks", () => ({
+  useTasks: () => ({
+    tasks: mockTasks,
+    subtasks: mockSubtasks,
+    loadTasksBySection: mockLoadTasksBySection,
+    createTask: vi.fn(),
+    updateTask: vi.fn(),
+    softDeleteTask: vi.fn(),
+    createSubtask: vi.fn(),
+    updateSubtask: vi.fn(),
+    softDeleteSubtask: vi.fn(),
+    loading: { value: false },
+    error: { value: null },
   }),
 }));
 
@@ -31,6 +82,8 @@ describe("SectionEditorView - Property-Based Tests", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockLoadStatusDefinitions.mockResolvedValue(undefined);
+    mockLoadTasksBySection.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -56,8 +109,8 @@ describe("SectionEditorView - Property-Based Tests", () => {
             content: fc.string({ maxLength: 5000 }),
             order: fc.integer({ min: 0, max: 100 }),
             is_enabled: fc.boolean(),
-            created_at: fc.date().map((d) => d.toISOString()),
-            updated_at: fc.date().map((d) => d.toISOString()),
+            created_at: fc.integer({ min: 1577836800000, max: 1924905600000 }).map((ts) => new Date(ts).toISOString()),
+            updated_at: fc.integer({ min: 1577836800000, max: 1924905600000 }).map((ts) => new Date(ts).toISOString()),
           }),
           async (sectionData: ReportSection) => {
             // Setup: Mock the backend to return the generated section data
@@ -175,8 +228,8 @@ describe("SectionEditorView - Property-Based Tests", () => {
             content: fc.string({ maxLength: 5000 }),
             order: fc.integer({ min: 0, max: 100 }),
             is_enabled: fc.boolean(),
-            created_at: fc.date().map((d) => d.toISOString()),
-            updated_at: fc.date().map((d) => d.toISOString()),
+            created_at: fc.integer({ min: 1577836800000, max: 1924905600000 }).map((ts) => new Date(ts).toISOString()),
+            updated_at: fc.integer({ min: 1577836800000, max: 1924905600000 }).map((ts) => new Date(ts).toISOString()),
           }),
           async (sectionData: ReportSection) => {
             // Setup: Mock the backend with a delayed response

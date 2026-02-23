@@ -2,10 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import SectionEditorView from "./SectionEditorView.vue";
 import { useReports } from "../composables/useReports";
+import { useTasks } from "../composables/useTasks";
 
 // Mock the composables
 vi.mock("../composables/useReports", () => ({
   useReports: vi.fn(),
+}));
+
+vi.mock("../composables/useTasks", () => ({
+  useTasks: vi.fn(),
 }));
 
 // Mock MonacoEditor component to avoid Monaco initialization issues in tests
@@ -20,13 +25,31 @@ vi.mock("../components/MonacoEditor.vue", () => ({
 describe("SectionEditorView - Reactive State Setup", () => {
   const mockGetReportSection = vi.fn();
   const mockUpdateReportSection = vi.fn();
+  const mockLoadStatusDefinitions = vi.fn();
+  const mockStatusDefinitions = { value: [] };
 
   beforeEach(() => {
     vi.clearAllMocks();
     (useReports as any).mockReturnValue({
       getReportSection: mockGetReportSection,
       updateReportSection: mockUpdateReportSection,
+      loadStatusDefinitions: mockLoadStatusDefinitions,
+      statusDefinitions: mockStatusDefinitions,
     });
+    (useTasks as any).mockReturnValue({
+      tasks: { value: [] },
+      subtasks: { value: [] },
+      loadTasksBySection: vi.fn(),
+      createTask: vi.fn(),
+      updateTask: vi.fn(),
+      softDeleteTask: vi.fn(),
+      createSubtask: vi.fn(),
+      updateSubtask: vi.fn(),
+      softDeleteSubtask: vi.fn(),
+      loading: { value: false },
+      error: { value: null },
+    });
+    mockLoadStatusDefinitions.mockResolvedValue(undefined);
   });
 
   it("should initialize all section data reactive refs", async () => {

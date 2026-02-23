@@ -18,11 +18,36 @@ vi.mock("../components/MonacoEditor.vue", () => ({
 // Mock useReports composable
 const mockGetReportSection = vi.fn();
 const mockUpdateReportSection = vi.fn();
+const mockLoadStatusDefinitions = vi.fn();
+const mockStatusDefinitions = { value: [] };
 
 vi.mock("../composables/useReports", () => ({
   useReports: () => ({
     getReportSection: mockGetReportSection,
     updateReportSection: mockUpdateReportSection,
+    loadStatusDefinitions: mockLoadStatusDefinitions,
+    statusDefinitions: mockStatusDefinitions,
+  }),
+}));
+
+// Mock useTasks composable
+const mockLoadTasksBySection = vi.fn();
+const mockTasks = { value: [] };
+const mockSubtasks = { value: [] };
+
+vi.mock("../composables/useTasks", () => ({
+  useTasks: () => ({
+    tasks: mockTasks,
+    subtasks: mockSubtasks,
+    loadTasksBySection: mockLoadTasksBySection,
+    createTask: vi.fn(),
+    updateTask: vi.fn(),
+    softDeleteTask: vi.fn(),
+    createSubtask: vi.fn(),
+    updateSubtask: vi.fn(),
+    softDeleteSubtask: vi.fn(),
+    loading: { value: false },
+    error: { value: null },
   }),
 }));
 
@@ -30,6 +55,8 @@ describe("SectionEditorView - Content Change Tracking", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockLoadStatusDefinitions.mockResolvedValue(undefined);
+    mockLoadTasksBySection.mockResolvedValue(undefined);
   });
 
   afterEach(() => {

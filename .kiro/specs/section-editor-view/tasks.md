@@ -83,25 +83,25 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Update content state and track changes
     - _Requirements: 2.5_
   
-  - [~] 5.3 Write property test for prose content round-trip preservation
+  - [x] 5.3 Write property test for prose content round-trip preservation
     - **Property 4: Prose Content Round-Trip Preservation**
     - **Validates: Requirements 2.6**
 
-- [ ] 6. Implement task list for status sections
-  - [~] 6.1 Create or identify TaskList component
+- [x] 6. Implement task list for status sections
+  - [x] 6.1 Create or identify TaskList component
     - Check if TaskList component exists, create if needed
     - Define props: sectionId, tasks
     - Define emits: task-created, task-updated, task-deleted
     - _Requirements: 3.1, 10.2_
   
-  - [~] 6.2 Integrate TaskList with section editor
+  - [x] 6.2 Integrate TaskList with section editor
     - Load tasks using useTasks composable
     - Pass tasks to TaskList component
     - Handle task modification events
     - Fill entire content area
     - _Requirements: 3.2, 3.3, 3.4, 3.5_
   
-  - [~] 6.3 Write property test for task display completeness
+  - [x] 6.3 Write property test for task display completeness
     - **Property 23: Task Display Completeness**
     - **Validates: Requirements 3.2**
 

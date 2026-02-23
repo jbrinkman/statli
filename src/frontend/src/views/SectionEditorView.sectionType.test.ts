@@ -18,11 +18,36 @@ vi.mock("../components/MonacoEditor.vue", () => ({
 // Mock useReports composable
 const mockGetReportSection = vi.fn();
 const mockUpdateReportSection = vi.fn();
+const mockLoadStatusDefinitions = vi.fn();
+const mockStatusDefinitions = { value: [] };
 
 vi.mock("../composables/useReports", () => ({
   useReports: () => ({
     getReportSection: mockGetReportSection,
     updateReportSection: mockUpdateReportSection,
+    loadStatusDefinitions: mockLoadStatusDefinitions,
+    statusDefinitions: mockStatusDefinitions,
+  }),
+}));
+
+// Mock useTasks composable
+const mockLoadTasksBySection = vi.fn();
+const mockTasks = { value: [] };
+const mockSubtasks = { value: [] };
+
+vi.mock("../composables/useTasks", () => ({
+  useTasks: () => ({
+    tasks: mockTasks,
+    subtasks: mockSubtasks,
+    loadTasksBySection: mockLoadTasksBySection,
+    createTask: vi.fn(),
+    updateTask: vi.fn(),
+    softDeleteTask: vi.fn(),
+    createSubtask: vi.fn(),
+    updateSubtask: vi.fn(),
+    softDeleteSubtask: vi.fn(),
+    loading: { value: false },
+    error: { value: null },
   }),
 }));
 
@@ -30,6 +55,8 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockLoadStatusDefinitions.mockResolvedValue(undefined);
+    mockLoadTasksBySection.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -164,7 +191,7 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       let monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
       expect(monacoEditor.exists()).toBe(true);
 
-      let taskList = wrapper.find(".task-list-container");
+      let taskList = wrapper.findComponent({ name: "TaskList" });
       expect(taskList.exists()).toBe(false);
 
       // Change type to status
@@ -177,7 +204,7 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       expect(monacoEditor.exists()).toBe(false);
 
       // Verify task list is displayed
-      taskList = wrapper.find(".task-list-container");
+      taskList = wrapper.findComponent({ name: "TaskList" });
       expect(taskList.exists()).toBe(true);
 
       wrapper.unmount();
@@ -206,7 +233,7 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Verify task list is displayed initially
-      let taskList = wrapper.find(".task-list-container");
+      let taskList = wrapper.findComponent({ name: "TaskList" });
       expect(taskList.exists()).toBe(true);
 
       let monacoEditor = wrapper.findComponent({ name: "MonacoEditor" });
@@ -218,7 +245,7 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       await nextTick();
 
       // Verify task list is hidden
-      taskList = wrapper.find(".task-list-container");
+      taskList = wrapper.findComponent({ name: "TaskList" });
       expect(taskList.exists()).toBe(false);
 
       // Verify MonacoEditor is displayed
@@ -260,7 +287,7 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       await nextTick();
 
       // Verify the component switched to task list (auto-save should be stopped)
-      const taskList = wrapper.find(".task-list-container");
+      const taskList = wrapper.findComponent({ name: "TaskList" });
       expect(taskList.exists()).toBe(true);
 
       wrapper.unmount();
@@ -289,7 +316,7 @@ describe("SectionEditorView - Section Type Selector (Task 3.2)", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Verify task list is displayed initially
-      let taskList = wrapper.find(".task-list-container");
+      let taskList = wrapper.findComponent({ name: "TaskList" });
       expect(taskList.exists()).toBe(true);
 
       // Change type to prose
