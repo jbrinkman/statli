@@ -121,6 +121,7 @@ const statusDefinitions = ref<StatusDefinition[]>([]);
 
 // Auto-save state
 const autoSaveIntervalId = ref<number | null>(null);
+const isLocalStorageAvailable = ref(true);
 
 // Navigation guard state
 const pendingNavigation = ref<(() => void) | null>(null);
@@ -257,17 +258,21 @@ const getLocalStorageKey = (): string => {
 
 const saveDraftToLocalStorage = () => {
     if (sectionType.value !== 'prose') return;
+    if (!isLocalStorageAvailable.value) return;
 
     try {
         const key = getLocalStorageKey();
         localStorage.setItem(key, content.value);
     } catch (err) {
         console.warn('Failed to save draft to localStorage:', err);
+        isLocalStorageAvailable.value = false;
+        stopAutoSave();
     }
 };
 
 const restoreDraftFromLocalStorage = () => {
     if (sectionType.value !== 'prose') return;
+    if (!isLocalStorageAvailable.value) return;
 
     try {
         const key = getLocalStorageKey();
@@ -277,20 +282,29 @@ const restoreDraftFromLocalStorage = () => {
         }
     } catch (err) {
         console.warn('Failed to restore draft from localStorage:', err);
+        isLocalStorageAvailable.value = false;
     }
 };
 
 const clearDraftFromLocalStorage = () => {
+    if (!isLocalStorageAvailable.value) return;
+
     try {
         const key = getLocalStorageKey();
         localStorage.removeItem(key);
     } catch (err) {
         console.warn('Failed to clear draft from localStorage:', err);
+        isLocalStorageAvailable.value = false;
     }
 };
 
 // Auto-save
 const startAutoSave = () => {
+    if (!isLocalStorageAvailable.value) {
+        console.warn('Auto-save disabled: localStorage is not available');
+        return;
+    }
+
     if (autoSaveIntervalId.value) {
         clearInterval(autoSaveIntervalId.value);
     }
