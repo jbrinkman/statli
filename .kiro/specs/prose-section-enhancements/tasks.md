@@ -219,8 +219,8 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Test canceling stylesheet editor discards changes
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 13. Implement comprehensive property-based tests
-  - [~] 13.1 Write property test for markdown round-trip integrity
+- [x] 13. Implement comprehensive property-based tests
+  - [x] 13.1 Write property test for markdown round-trip integrity
     - **Property 14: Markdown Round-Trip Integrity**
     - **Validates: Requirements 6.1, 6.2, 6.3**
     - Generate random markdown strings (1-10000 chars)
@@ -228,7 +228,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Verify content is identical (most critical property)
     - Run 100 iterations minimum
   
-  - [~] 13.2 Write property test for full-screen editor display
+  - [x] 13.2 Write property test for full-screen editor display
     - **Property 1: Full-Screen Editor Display**
     - **Validates: Requirements 1.1, 1.2, 1.3**
     - Open editor for new and existing sections
@@ -236,7 +236,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Verify remains full-screen until save/cancel
     - Run 100 iterations minimum
   
-  - [~] 13.3 Write property test for syntax highlighting
+  - [x] 13.3 Write property test for syntax highlighting
     - **Property 3: Syntax Highlighting for Markup**
     - **Validates: Requirements 2.3, 2.4**
     - Generate markdown/HTML with various syntax tokens
@@ -244,7 +244,7 @@ The implementation uses TypeScript and Vue 3, with Monaco Editor for syntax high
     - Check headers, bold, italic, tags are differentiated from plain text
     - Run 100 iterations minimum
   
-  - [~] 13.4 Write property test for real-time highlighting updates
+  - [x] 13.4 Write property test for real-time highlighting updates
     - **Property 4: Real-Time Highlighting Updates**
     - **Validates: Requirements 2.5**
     - Simulate text input events
