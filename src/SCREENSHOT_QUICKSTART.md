@@ -37,6 +37,7 @@ When you describe a UI issue, I can request:
 # Or for specific views (NEW):
 ./screenshot-tool -view tasks -project 1 -output screenshots/tasks-view.png
 ./screenshot-tool -view report -project 1 -output screenshots/report-view.png
+./screenshot-tool -view form -output screenshots/create-project-form.png
 
 # Or for specific selectors:
 ./screenshot-tool -selector ".project-list" -output screenshots/project-list-view.png
@@ -94,6 +95,7 @@ task screenshot-custom OUTPUT=screenshots/my-issue.png
 # Take screenshot of specific view (NEW)
 task screenshot-view VIEW=tasks PROJECT=1
 task screenshot-view VIEW=report PROJECT=2
+task screenshot-view VIEW=form  # No project ID needed for form
 
 # Build screenshot tool only
 task screenshot-tool
@@ -112,7 +114,7 @@ task clean
 
 - `-url`: Base URL (default: <http://localhost:34115>)
 - `-output`: Output file path (default: screenshots/capture-<timestamp>.png)
-- `-view`: View to navigate to (projects, tasks, or report) **NEW**
+- `-view`: View to navigate to (projects, tasks, report, form) **NEW**
 - `-project`: Project ID (required for tasks/report views) **NEW**
 - `-selector`: CSS selector to wait for (default: body)
 - `-wait`: Duration to wait after page load (default: 1s)

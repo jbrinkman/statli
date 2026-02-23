@@ -242,6 +242,14 @@ type ScreenshotStep struct {
 func NavigateToView(view string, projectID int) chromedp.Action {
 	return chromedp.ActionFunc(func(ctx context.Context) error {
 		switch view {
+		case "form":
+			// Click the "Create Project" button to show the form
+			if err := chromedp.Click(`button[aria-label*="Create new project"]`, chromedp.ByQuery).Do(ctx); err != nil {
+				return fmt.Errorf("failed to click create project button: %w", err)
+			}
+			// Wait for form to appear
+			return chromedp.WaitVisible(`[data-component="project-form"]`, chromedp.ByQuery).Do(ctx)
+
 		case "tasks":
 			// Click on the project button to navigate to tasks view
 			selector := fmt.Sprintf(`button[data-project-id="%d"]`, projectID)

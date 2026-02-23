@@ -28,8 +28,8 @@ func main() {
 	flag.Parse()
 
 	// Validate view and project parameters
-	if *view != "" && *view != "projects" && *view != "tasks" && *view != "report" {
-		fmt.Fprintf(os.Stderr, "Invalid view: %s. Must be one of: projects, tasks, report\n", *view)
+	if *view != "" && *view != "projects" && *view != "tasks" && *view != "report" && *view != "form" {
+		fmt.Fprintf(os.Stderr, "Invalid view: %s. Must be one of: projects, tasks, report, form\n", *view)
 		os.Exit(1)
 	}
 	if (*view == "tasks" || *view == "report") && *projectID == 0 {

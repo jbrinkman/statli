@@ -1,25 +1,16 @@
 <template>
-  <div class="project-view">
+  <div class="project-view" :data-view-state="showForm ? 'form' : 'list'">
     <!-- Show ProjectForm when creating/editing -->
     <div v-if="showForm" class="form-container">
-      <ProjectForm
-        :project="editingProject"
-        @submit="handleProjectSubmit"
-        @cancel="handleFormCancel"
-      />
+      <ProjectForm :project="editingProject" @submit="handleProjectSubmit" @cancel="handleFormCancel"
+        data-component="project-form" />
     </div>
 
     <!-- Show ProjectList when not creating/editing -->
     <div v-else class="list-container">
-      <ProjectList
-        :active-projects="activeProjects"
-        :archived-projects="archivedProjects"
-        :loading="loading"
-        :error="error"
-        :selected-project-id="selectedProjectId"
-        @create="handleCreateProject"
-        @select="handleSelectProject"
-      />
+      <ProjectList :active-projects="activeProjects" :archived-projects="archivedProjects" :loading="loading"
+        :error="error" :selected-project-id="selectedProjectId" @create="handleCreateProject"
+        @select="handleSelectProject" />
     </div>
   </div>
 </template>
