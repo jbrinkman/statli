@@ -278,8 +278,8 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - Semantic HTML structure
     - _Requirements: 10.5_
 
-- [ ] 16. Add error handling and edge cases
-  - [ ] 16.1 Handle backend API errors
+- [-] 16. Add error handling and edge cases
+  - [x] 16.1 Handle backend API errors
     - Display user-friendly error messages
     - Log detailed errors to console
     - Remain in edit mode on errors

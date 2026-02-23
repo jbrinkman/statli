@@ -165,7 +165,10 @@ const loadSection = async (id: number) => {
             startAutoSave();
         }
     } catch (err: any) {
-        error.value = err.message || 'Failed to load section';
+        // Display user-friendly error message
+        const errorMessage = err.message || 'Failed to load section';
+        error.value = `Unable to load section: ${errorMessage}. Please try refreshing the page.`;
+        // Log detailed error to console for debugging
         console.error('Failed to load section:', err);
     } finally {
         loading.value = false;
@@ -204,11 +207,13 @@ const handleSave = async () => {
         // Navigate back
         emit('navigate-back');
     } catch (err: any) {
-        // Set error message - use a default if the error message is empty or whitespace
+        // Display user-friendly error message
         const errorMessage = err.message || 'Failed to save section';
-        // Only use fallback if the trimmed message is empty, but preserve original whitespace
-        error.value = errorMessage.trim().length > 0 ? errorMessage : 'Failed to save section';
+        error.value = `Unable to save changes: ${errorMessage}. Your changes are preserved. Please try again.`;
+        // Log detailed error to console for debugging
         console.error('Failed to save section:', err);
+        // Remain in edit mode - don't navigate away
+        // Unsaved changes are preserved in component state
     } finally {
         saving.value = false;
     }

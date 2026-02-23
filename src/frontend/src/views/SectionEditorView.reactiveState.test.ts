@@ -154,7 +154,9 @@ describe("SectionEditorView - Reactive State Setup", () => {
 
     // Wait for error to be set
     await vi.waitFor(() => {
-      expect(wrapper.vm.error).toBe("Failed to load");
+      expect(wrapper.vm.error).toBe(
+        "Unable to load section: Failed to load. Please try refreshing the page.",
+      );
     });
 
     expect(wrapper.vm.loading).toBe(false);
