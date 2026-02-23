@@ -70,7 +70,7 @@ The implementation follows the architectural pattern of TaskView.vue and reuses 
     - **Property 3: Section Type Change Component Switch**
     - **Validates: Requirements 4.4, 4.5**
 
-- [~] 5. Integrate MonacoEditor for prose sections
+- [x] 5. Integrate MonacoEditor for prose sections
   - [x] 5.1 Add MonacoEditor component with proper configuration
     - Import and use existing MonacoEditor.vue component
     - Configure for markdown language by default
