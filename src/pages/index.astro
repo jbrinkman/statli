@@ -1,8 +1,17 @@
 ---
-import Layout from "../layouts/Layout.astro";
----
+import { auth } from "../lib/auth.js";
 
-<Layout title="Statli">
-	<h1>Statli</h1>
-	<p>Project status tracking dashboard</p>
-</Layout>
+let isAuthenticated = false;
+try {
+	const session = await auth.api.getSession({ headers: Astro.request.headers });
+	isAuthenticated = !!session?.user;
+} catch {
+	// Auth not configured or failed — treat as unauthenticated
+}
+
+if (isAuthenticated) {
+	return Astro.redirect("/dashboard");
+}
+
+return Astro.redirect("/login");
+---

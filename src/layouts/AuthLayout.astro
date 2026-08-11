@@ -1,0 +1,49 @@
+---
+import "../styles/global.css";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title} — Statli</title>
+	</head>
+	<body>
+		<main class="auth-container">
+			<div class="auth-card">
+				<h1>Statli</h1>
+				<slot />
+			</div>
+		</main>
+	</body>
+</html>
+
+<style>
+	.auth-container {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: var(--space-md);
+	}
+	.auth-card {
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		padding: var(--space-xl);
+		width: 100%;
+		max-width: 400px;
+	}
+	.auth-card h1 {
+		margin-bottom: var(--space-lg);
+		text-align: center;
+		font-size: var(--font-size-xl);
+	}
+</style>
