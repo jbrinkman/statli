@@ -145,8 +145,8 @@ function parseRow(
 
 	const prIdx = headers.findIndex((h) => h === "prs" || h === "pr");
 	const issueIdx = headers.findIndex((h) => h === "issues" || h === "issue");
-	const releaseIdx = headers.findIndex((h) => h === "release");
-	const reasonIdx = headers.findIndex((h) => h === "reason");
+	const releaseIdx = headers.indexOf("release");
+	const reasonIdx = headers.indexOf("reason");
 	const notesIdx = headers.findIndex((h) => h === "notes" || h === "description");
 
 	const prUrls = prIdx >= 0 && cells[prIdx] ? extractLinks(cells[prIdx]) : [];
