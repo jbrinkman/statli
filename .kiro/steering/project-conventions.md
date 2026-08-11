@@ -59,10 +59,16 @@ statli/
 ├── .kiro/
 │   ├── specs/                  # Implementation specs (5 phases)
 │   └── steering/               # Agent conventions and constraints
+├── data/                       # SQLite database directory (gitignored except .gitkeep)
 ├── src/
 │   ├── env.d.ts                # Astro type references
 │   ├── layouts/Layout.astro    # Base HTML layout
-│   └── pages/index.astro       # Homepage
+│   ├── lib/
+│   │   ├── db/                 # Database module (connection, migrations, DAL)
+│   │   └── schemas/            # Zod validation schemas (single source of truth)
+│   └── pages/
+│       ├── api/                # API routes (all DB access goes through here)
+│       └── index.astro         # Homepage
 ├── tests/
 │   ├── e2e/                    # Playwright end-to-end tests
 │   └── unit/                   # Vitest unit tests

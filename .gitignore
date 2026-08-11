@@ -13,6 +13,9 @@ dist/
 # Database
 *.db
 *.sqlite
+data/*.db
+data/*.db-journal
+data/*.db-wal
 
 # Test output
 coverage/
