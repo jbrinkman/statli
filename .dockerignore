@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.astro
+coverage
+test-results
+playwright-report
+*.db
+*.sqlite
+.env
+.env.*
+!.env.example
