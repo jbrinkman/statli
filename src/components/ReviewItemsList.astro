@@ -1,0 +1,89 @@
+---
+interface ReviewItemData {
+	id: string;
+	type: string;
+	reason: string;
+	created_at: string;
+}
+
+interface Props {
+	projectId: string;
+	items: ReviewItemData[];
+}
+
+const { projectId, items } = Astro.props;
+---
+
+<div class="review-items-list" data-project-id={projectId}>
+	{items.map((item) => (
+		<div class="review-item" data-review-id={item.id}>
+			<div class="review-item-header">
+				<span class="review-type">{item.type.replace(/_/g, " ")}</span>
+				<button class="resolve-btn" data-id={item.id}>Resolve</button>
+			</div>
+			<p class="review-reason">{item.reason}</p>
+			<time class="review-date">{new Date(item.created_at).toLocaleDateString()}</time>
+		</div>
+	))}
+</div>
+
+<style>
+	.review-items-list {
+		margin-top: var(--space-sm);
+		border-top: 1px solid var(--border);
+		padding-top: var(--space-sm);
+	}
+	.review-item {
+		padding: var(--space-xs) 0;
+		border-bottom: 1px solid var(--border);
+	}
+	.review-item:last-child {
+		border-bottom: none;
+	}
+	.review-item-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.review-type {
+		font-size: 0.75rem;
+		text-transform: capitalize;
+		color: var(--color-needs-review);
+		font-weight: 500;
+	}
+	.resolve-btn {
+		font-size: 0.7rem;
+		padding: 2px 6px;
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		background: none;
+		color: var(--text-muted);
+	}
+	.resolve-btn:hover {
+		background: var(--color-completed);
+		color: white;
+		border-color: var(--color-completed);
+	}
+	.review-reason {
+		font-size: var(--font-size-sm);
+		color: var(--text);
+		margin-top: var(--space-xs);
+	}
+	.review-date {
+		font-size: 0.7rem;
+		color: var(--text-muted);
+	}
+</style>
+
+<script>
+	document.querySelectorAll(".resolve-btn").forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			const id = (e.target as HTMLElement).dataset.id;
+			const res = await fetch(`/api/reviews/${id}/resolve`, { method: "POST" });
+			if (res.ok) {
+				const item = (e.target as HTMLElement).closest(".review-item");
+				item?.remove();
+			}
+		});
+	});
+</script>
