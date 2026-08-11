@@ -1,4 +1,4 @@
-import { createDatabase } from "./db/index.js";
+import { createDatabase } from "./index.js";
 
 let db: ReturnType<typeof createDatabase> | null = null;
 

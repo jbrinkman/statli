@@ -19,13 +19,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	// Check Better Auth session
-	const session = await auth.api.getSession({
-		headers: context.request.headers,
-	});
+	try {
+		const session = await auth.api.getSession({
+			headers: context.request.headers,
+		});
 
-	if (session?.user) {
-		context.locals.user = { id: session.user.id, type: "human" };
-		return next();
+		if (session?.user) {
+			context.locals.user = { id: session.user.id, type: "human" };
+			return next();
+		}
+	} catch {
+		// Auth not configured — reject
 	}
 
 	// No valid auth
