@@ -10,11 +10,21 @@
 
 _Requirements: 1_
 
-- [ ] Remove legacy files using explicit targeted commands: `git rm -r src docs .vscode` and `git rm README.md` (list ONLY the specific paths that exist to remove — NEVER use `git rm -r .` or `git rm -r *`)
-- [ ] Verify: `git status` shows .kiro/ directory is UNTOUCHED (no changes inside .kiro/)
+- [ ] **⚠️ CRITICAL SAFETY RULE:** The `.kiro/` directory MUST NOT be modified, removed, or unstaged at any point during this task. If at any step `git status` shows changes inside `.kiro/`, STOP IMMEDIATELY and revert with `git checkout -- .kiro/`
+- [ ] **FORBIDDEN COMMANDS (never use):** `git rm -r .`, `git rm -r *`, `git rm --cached .`, `git rm -rf`, or ANY glob/wildcard that could match `.kiro/`. Only explicit, named paths are allowed.
+- [ ] First, verify what legacy files exist: run `ls -la` at repo root. Identify ONLY paths to remove. Protected paths that MUST NOT be touched: `.kiro/`, `LICENSE`
+- [ ] Remove legacy files using ONLY explicit targeted commands (skip any that don't exist):
+  - `git rm -r src` (if exists)
+  - `git rm -r docs` (if exists)
+  - `git rm -r .vscode` (if exists)
+  - `git rm README.md` (if exists)
+- [ ] **VERIFICATION GATE 1 (must pass before continuing):** Run `git status` and confirm:
+  - `.kiro/` does NOT appear anywhere in the output (not staged, not modified, not deleted)
+  - `LICENSE` is NOT listed as deleted or modified
+  - IF either check fails: run `git checkout -- .kiro/ LICENSE` and investigate what went wrong before proceeding
 - [ ] Rewrite `.gitignore` for Astro/Node/TypeScript stack: node_modules/, dist/, .astro/, .env, .env.\*, !.env.example, \*.db, \*.sqlite, coverage/, test-results/, playwright-report/, .DS_Store, \*.log
 - [ ] Create placeholder `README.md` with project name, single-line description ("Statli v2 — Project status tracking dashboard with AI-powered data ingestion"), and Getting Started section noting "Setup in progress — see subsequent commits"
-- [ ] Verify: `git status` shows only intended changes; `git log` still shows full history; .kiro/ is untouched
+- [ ] **VERIFICATION GATE 2 (must pass before commit):** Run `git diff --cached --name-only` and confirm the output lists ONLY: deleted legacy paths, .gitignore, README.md. Zero `.kiro/` paths should appear. IF any `.kiro/` path appears, STOP and run `git reset HEAD .kiro/`
 - [ ] Commit: `chore: reset repository for v2 TypeScript/Astro rewrite`
 
 ## Task 2: Project Steering Documents
