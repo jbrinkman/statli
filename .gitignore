@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.sqlite
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+
+# System
+.DS_Store
+*.log
