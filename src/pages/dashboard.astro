@@ -1,0 +1,68 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Board from "../components/Board.astro";
+import { auth } from "../lib/auth.js";
+import { fetchProjects, fetchHistory } from "../lib/api-client.js";
+
+// Auth check
+let session;
+try {
+	session = await auth.api.getSession({ headers: Astro.request.headers });
+} catch {
+	return Astro.redirect("/login");
+}
+
+if (!session?.user) {
+	return Astro.redirect("/login");
+}
+
+// Fetch data
+const projectsResult = await fetchProjects(Astro.request);
+const projects = projectsResult.data || [];
+
+const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+const historyResult = await fetchHistory(Astro.request, sevenDaysAgo);
+const history = historyResult.data || [];
+
+// Compute recently changed project IDs
+const recentIds = new Set(history.map((h) => h.project_id));
+
+// Compute review counts per project
+const reviewCounts = new Map<string, number>();
+for (const project of projects) {
+	if (project.needs_review) {
+		// Count is at least 1 if needs_review is true
+		reviewCounts.set(project.id, 1);
+	}
+}
+
+const totalReviewItems = Array.from(reviewCounts.values()).reduce((sum, c) => sum + c, 0);
+---
+
+<Layout title="Dashboard — Statli">
+	<Header email={session.user.email} totalReviewItems={totalReviewItems} />
+	<main class="dashboard-main">
+		{projectsResult.error ? (
+			<div class="error-banner">
+				<p>Failed to load projects: {projectsResult.error}</p>
+			</div>
+		) : (
+			<Board projects={projects} recentIds={recentIds} reviewCounts={reviewCounts} />
+		)}
+	</main>
+</Layout>
+
+<style>
+	.dashboard-main {
+		padding: var(--space-lg) var(--space-xl);
+		overflow-x: auto;
+	}
+	.error-banner {
+		background: #fef2f2;
+		border: 1px solid var(--color-needs-review);
+		border-radius: var(--border-radius);
+		padding: var(--space-md);
+		color: var(--color-needs-review);
+	}
+</style>

@@ -1,0 +1,80 @@
+---
+interface Props {
+	email?: string;
+	totalReviewItems: number;
+}
+
+const { email, totalReviewItems } = Astro.props;
+---
+
+<header class="app-header">
+	<div class="header-left">
+		<h1>Statli</h1>
+		{totalReviewItems > 0 && (
+			<span class="review-summary">
+				{totalReviewItems} item{totalReviewItems !== 1 ? "s" : ""} need review
+			</span>
+		)}
+	</div>
+	<div class="header-right">
+		{email && <span class="user-email">{email}</span>}
+		<form method="POST" action="/api/auth/sign-out" id="logout-form">
+			<button type="submit" class="logout-btn">Logout</button>
+		</form>
+	</div>
+</header>
+
+<style>
+	.app-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--space-md) var(--space-xl);
+		background: var(--card-bg);
+		border-bottom: 1px solid var(--border);
+	}
+	.header-left {
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+	}
+	.header-left h1 {
+		font-size: var(--font-size-xl);
+	}
+	.review-summary {
+		background: var(--color-needs-review);
+		color: white;
+		padding: var(--space-xs) var(--space-sm);
+		border-radius: var(--border-radius);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+	}
+	.header-right {
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+	}
+	.user-email {
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+	}
+	.logout-btn {
+		padding: var(--space-xs) var(--space-sm);
+		background: none;
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+	}
+	.logout-btn:hover {
+		background: var(--bg);
+	}
+</style>
+
+<script>
+	document.getElementById("logout-form")?.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		await fetch("/api/auth/sign-out", { method: "POST" });
+		window.location.href = "/login";
+	});
+</script>
