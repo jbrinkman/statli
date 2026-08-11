@@ -94,6 +94,49 @@ docker build -t statli .
 docker run --rm -p 127.0.0.1:4321:4321 statli
 ```
 
+## MCP Server
+
+The project includes an MCP (Model Context Protocol) server for AI agent integration.
+
+### Build & Run
+
+```bash
+npm run build:mcp             # Compile TypeScript
+STATLI_API_KEY=<key> STATLI_API_URL=http://127.0.0.1:4321 npm run start:mcp
+```
+
+### KiroCrew Registration
+
+Add to `~/.kiro/crew/mcp.json`:
+```json
+{
+  "statli": {
+    "command": "node",
+    "args": ["dist/mcp-server/index.js"],
+    "cwd": "~/projects/statli",
+    "env": {
+      "STATLI_API_KEY": "${STATLI_API_KEY}",
+      "STATLI_API_URL": "http://127.0.0.1:4321"
+    }
+  }
+}
+```
+
+### Available Tools (11)
+
+**Project management:** `list_projects`, `get_project`, `create_project`, `update_project`, `delete_project`, `lock_project`, `unlock_project`
+
+**Review items:** `list_review_items`, `add_review_item`, `resolve_review_item`
+
+**History:** `get_change_history`
+
+## Data Seeding
+
+```bash
+npm run seed -- --report-path path/to/status-report.md
+npm run validate:sources   # compare against Confluence (requires atlas CLI)
+```
+
 ## Architecture
 
 Astro SSR application serving a dashboard UI and API routes, backed by SQLite. Single process — no separate backend service.
