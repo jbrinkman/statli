@@ -63,14 +63,33 @@ statli/
 ├── src/
 │   ├── env.d.ts                # Astro type references
 │   ├── layouts/Layout.astro    # Base HTML layout
+│   ├── middleware.ts           # Auth middleware (API key + Better Auth session)
 │   ├── lib/
+│   │   ├── api-utils.ts        # JSON response helpers and error handler
+│   │   ├── auth.ts             # Better Auth configuration
+│   │   ├── errors.ts           # AppError, NotFoundError, ConflictError, ValidationError
+│   │   ├── startup.ts          # Environment validation on boot
 │   │   ├── db/                 # Database module (connection, migrations, DAL)
+│   │   │   ├── index.ts        # createDatabase(), runMigrations()
+│   │   │   ├── connection.ts   # Singleton DB instance for API routes
+│   │   │   ├── projects.ts     # Project CRUD + lock/unlock
+│   │   │   ├── history.ts      # Change history recording + queries
+│   │   │   ├── reviews.ts      # Review items CRUD
+│   │   │   └── migrations/     # Numbered SQL migration files
 │   │   └── schemas/            # Zod validation schemas (single source of truth)
+│   │       ├── common.ts       # Enums, response format, shared types
+│   │       ├── project.ts      # Create/update/filter schemas + Project type
+│   │       └── review.ts       # Review item schemas + ReviewItem type
 │   └── pages/
 │       ├── api/                # API routes (all DB access goes through here)
+│       │   ├── auth/[...all].ts
+│       │   ├── projects/       # CRUD, lock/unlock, reviews, history
+│       │   ├── reviews/        # Global review list + resolve
+│       │   └── history/        # Global change history
 │       └── index.astro         # Homepage
 ├── tests/
 │   ├── e2e/                    # Playwright end-to-end tests
+│   ├── integration/            # DAL + API integration tests
 │   └── unit/                   # Vitest unit tests
 ├── .env.example                # Environment variable template
 ├── .node-version               # Node.js version (24)
