@@ -10,9 +10,11 @@ Every task must satisfy ALL of the following before it can be marked complete:
 
 - [ ] All tests pass (`npm run test` — 100% pass rate)
 - [ ] Coverage meets threshold (`npm run test:coverage` — 80% minimum)
-- [ ] Lint passes (`npm run lint` — zero errors)
+- [ ] Lint passes (`npm run lint` — zero errors AND zero warnings)
 - [ ] Docker build succeeds (`docker build -t statli .`)
 - [ ] E2E tests pass (`npm run test:e2e`)
+
+**Warnings are errors.** If any quality gate produces warnings, the task is not complete. Fix the root cause — do not suppress or ignore warnings.
 
 ## Commit Requirements
 
