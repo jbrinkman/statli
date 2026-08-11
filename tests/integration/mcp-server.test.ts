@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { getHistoryToolDefinitions } from "../../src/mcp-server/tools/history.js";
 import { getProjectToolDefinitions } from "../../src/mcp-server/tools/projects.js";
 import { getReviewToolDefinitions } from "../../src/mcp-server/tools/reviews.js";
-import { getHistoryToolDefinitions } from "../../src/mcp-server/tools/history.js";
 
 describe("MCP tool listing", () => {
 	it("exposes all 11 tools", () => {
@@ -52,7 +52,13 @@ describe("MCP tool listing", () => {
 
 	it("tools requiring identifier have it in required", () => {
 		const tools = getProjectToolDefinitions();
-		const requiresId = ["get_project", "update_project", "delete_project", "lock_project", "unlock_project"];
+		const requiresId = [
+			"get_project",
+			"update_project",
+			"delete_project",
+			"lock_project",
+			"unlock_project",
+		];
 		for (const tool of tools) {
 			if (requiresId.includes(tool.name)) {
 				expect(tool.inputSchema.required).toContain("identifier");
