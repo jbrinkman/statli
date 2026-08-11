@@ -1,6 +1,10 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { StatliClient } from "./client.js";
+import { getHistoryToolDefinitions } from "./tools/history.js";
+import { getProjectToolDefinitions } from "./tools/projects.js";
+import { getReviewToolDefinitions } from "./tools/reviews.js";
 
 const apiUrl = process.env.STATLI_API_URL || "http://127.0.0.1:4321";
 const apiKey = process.env.STATLI_API_KEY;
@@ -21,6 +25,29 @@ try {
 
 const server = new Server({ name: "statli", version: "1.0.0" }, { capabilities: { tools: {} } });
 
-// Tool registration added in subsequent tasks
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+	return {
+		tools: [
+			...getProjectToolDefinitions(),
+			...getReviewToolDefinitions(),
+			...getHistoryToolDefinitions(),
+		],
+	};
+});
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+	const { name, arguments: args = {} } = request.params;
+	try {
+		// Import handlers dynamically to keep this file clean
+		const { handleToolCall } = await import("./tools/handler.js");
+		return await handleToolCall(client, name, args as Record<string, unknown>);
+	} catch (error) {
+		return {
+			content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+			isError: true,
+		};
+	}
+});
+
 const transport = new StdioServerTransport();
 await server.connect(transport);
