@@ -1,12 +1,25 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.5.8/schema.json",
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"suspicious": {
+				"noExplicitAny": "error"
+			},
+			"style": {
+				"noNonNullAssertion": "error"
+			}
+		}
+	},
+	"assist": {
+		"enabled": true
+	},
+	"formatter": {
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
 	"files": {
-		"includes": [
-			"src/**/*.ts",
-			"src/**/*.astro",
-			"tests/**/*.ts",
-			"*.config.ts",
-			"*.config.mts"
-		]
+		"includes": ["src/**/*.ts", "src/**/*.astro", "tests/**/*.ts", "*.config.ts", "*.config.mts"]
 	}
 }
