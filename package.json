@@ -11,6 +11,7 @@
 		"preview": "astro preview",
 		"start:mcp": "node dist/mcp-server/index.js",
 		"seed": "tsx src/scripts/seed.ts",
+		"validate:sources": "tsx src/scripts/validate.ts",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"test": "vitest run",
