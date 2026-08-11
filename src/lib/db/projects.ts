@@ -102,6 +102,10 @@ export function listProjects(db: Database.Database, filters?: ListProjectsFilter
 		query += " AND p.category = ?";
 		params.push(filters.category);
 	}
+	if (filters?.name) {
+		query += " AND LOWER(p.name) = LOWER(?)";
+		params.push(filters.name);
+	}
 
 	query += " ORDER BY p.updated_at DESC";
 

@@ -104,6 +104,21 @@ describe("project DAL", () => {
 			expect(results).toHaveLength(1);
 			expect(results[0].name).toBe("Infra");
 		});
+
+		it("filters by name (case-insensitive)", () => {
+			createProject(db, validProject);
+			createProject(db, { ...validProject, name: "LocalAI" });
+
+			const exact = listProjects(db, { name: "LocalAI" });
+			expect(exact).toHaveLength(1);
+			expect(exact[0].name).toBe("LocalAI");
+
+			const caseInsensitive = listProjects(db, { name: "localai" });
+			expect(caseInsensitive).toHaveLength(1);
+
+			const noMatch = listProjects(db, { name: "nonexistent" });
+			expect(noMatch).toHaveLength(0);
+		});
 	});
 
 	describe("updateProject", () => {

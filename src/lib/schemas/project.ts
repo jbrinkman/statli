@@ -22,6 +22,7 @@ export const listProjectsFilterSchema = z.object({
 	status: statusEnum.optional(),
 	category: categoryEnum.optional(),
 	needs_review: z.boolean().optional(),
+	name: z.string().optional(),
 });
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
