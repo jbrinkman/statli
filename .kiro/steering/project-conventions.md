@@ -50,3 +50,30 @@ inclusion: always
 - `README.md` — for humans: how to run, prerequisites, commands
 - `.kiro/steering/` — for agents: conventions, structure, constraints
 - No duplication between the two
+
+## Project Structure
+
+```
+statli/
+├── .github/workflows/ci.yml   # GitHub Actions CI pipeline
+├── .kiro/
+│   ├── specs/                  # Implementation specs (5 phases)
+│   └── steering/               # Agent conventions and constraints
+├── src/
+│   ├── env.d.ts                # Astro type references
+│   ├── layouts/Layout.astro    # Base HTML layout
+│   └── pages/index.astro       # Homepage
+├── tests/
+│   ├── e2e/                    # Playwright end-to-end tests
+│   └── unit/                   # Vitest unit tests
+├── .env.example                # Environment variable template
+├── .node-version               # Node.js version (24)
+├── astro.config.ts             # Astro SSR + Node adapter config
+├── biome.json                  # Linter/formatter configuration
+├── docker-compose.yml          # Docker Compose for local dev
+├── Dockerfile                  # Multi-stage production build
+├── package.json                # Dependencies and scripts
+├── playwright.config.ts        # E2E test configuration
+├── tsconfig.json               # TypeScript strict config
+└── vitest.config.ts            # Unit test + coverage config
+```
