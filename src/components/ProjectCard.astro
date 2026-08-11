@@ -1,0 +1,90 @@
+---
+import type { Project } from "../lib/schemas/project.js";
+import ReviewBadge from "./ReviewBadge.astro";
+
+interface Props {
+	project: Project;
+	isRecent?: boolean;
+	reviewCount?: number;
+}
+
+const { project, isRecent = false, reviewCount = 0 } = Astro.props;
+const daysAgo = Math.floor(
+	(Date.now() - new Date(project.updated_at).getTime()) / (1000 * 60 * 60 * 24),
+);
+---
+
+<div class:list={["project-card", { recent: isRecent }]}>
+	<div class="card-header">
+		<span class="card-name">{project.name}</span>
+		<span class="card-indicators">
+			{project.locked && <span class="lock-icon" title="Locked">🔒</span>}
+			{reviewCount > 0 && <ReviewBadge count={reviewCount} />}
+		</span>
+	</div>
+	{project.pr_urls.length > 0 && (
+		<div class="card-meta">
+			<a href={project.pr_urls[0]} target="_blank" rel="noopener">
+				{project.pr_urls.length} PR{project.pr_urls.length > 1 ? "s" : ""}
+			</a>
+		</div>
+	)}
+	{project.release_url && (
+		<div class="card-meta">
+			<a href={project.release_url} target="_blank" rel="noopener">Release</a>
+		</div>
+	)}
+	{isRecent && <div class="card-subtitle">Changed {daysAgo}d ago</div>}
+	{project.drop_reason && (
+		<div class="card-meta drop-reason" title={project.drop_reason}>
+			{project.drop_reason.slice(0, 40)}{project.drop_reason.length > 40 ? "…" : ""}
+		</div>
+	)}
+</div>
+
+<style>
+	.project-card {
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		padding: var(--space-sm) var(--space-md);
+		margin-bottom: var(--space-sm);
+	}
+	.project-card.recent {
+		border-left: 3px solid var(--color-recent);
+	}
+	.card-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: var(--space-sm);
+	}
+	.card-name {
+		font-weight: 500;
+		font-size: var(--font-size-sm);
+	}
+	.card-indicators {
+		display: flex;
+		gap: var(--space-xs);
+		align-items: center;
+	}
+	.lock-icon {
+		font-size: 0.75rem;
+	}
+	.card-meta {
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+		margin-top: var(--space-xs);
+	}
+	.card-subtitle {
+		font-size: 0.75rem;
+		color: var(--color-recent);
+		margin-top: var(--space-xs);
+	}
+	.drop-reason {
+		font-style: italic;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+</style>

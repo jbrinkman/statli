@@ -1,0 +1,135 @@
+---
+import type { Project } from "../lib/schemas/project.js";
+import ProjectCard from "./ProjectCard.astro";
+
+interface Props {
+	projects: Project[];
+	recentIds: Set<string>;
+	reviewCounts: Map<string, number>;
+}
+
+const { projects, recentIds, reviewCounts } = Astro.props;
+
+const categories = [
+	{ key: "integration", label: "Integration Projects" },
+	{ key: "valkey_module", label: "Valkey Module Projects" },
+	{ key: "valkey_glide", label: "Valkey Glide Projects" },
+	{ key: "valkey_docs_demos", label: "Valkey Docs/Demos" },
+	{ key: "infrastructure", label: "Infrastructure" },
+];
+
+const statuses = [
+	{ key: "in_progress", label: "In Progress" },
+	{ key: "submitted", label: "Submitted" },
+	{ key: "merged", label: "Merged" },
+	{ key: "completed", label: "Completed" },
+	{ key: "dropped", label: "Dropped" },
+];
+
+function getProjectsForCell(category: string, status: string): Project[] {
+	return projects.filter((p) => p.category === category && p.status === status);
+}
+---
+
+<div class="board" role="grid">
+	<div class="board-header" role="row">
+		<div class="swimlane-label" role="columnheader"></div>
+		{statuses.map((s) => (
+			<div class="col-header" role="columnheader" scope="col">
+				{s.label}
+			</div>
+		))}
+	</div>
+
+	{categories.map((cat) => {
+		const catProjects = projects.filter((p) => p.category === cat.key);
+		const catReviewCount = catProjects.reduce(
+			(sum, p) => sum + (reviewCounts.get(p.id) || 0),
+			0,
+		);
+		return (
+			<div class="board-row" role="row">
+				<div class="swimlane-label" role="rowheader" scope="row">
+					{cat.label}
+					<span class="swimlane-count">({catProjects.length})</span>
+					{catReviewCount > 0 && (
+						<span class="swimlane-review-badge">{catReviewCount}</span>
+					)}
+				</div>
+				{statuses.map((s) => {
+					const cellProjects = getProjectsForCell(cat.key, s.key);
+					return (
+						<div class="board-cell" role="gridcell">
+							{cellProjects.length > 0 ? (
+								cellProjects.map((p) => (
+									<ProjectCard
+										project={p}
+										isRecent={recentIds.has(p.id)}
+										reviewCount={reviewCounts.get(p.id) || 0}
+									/>
+								))
+							) : (
+								<span class="empty-cell">—</span>
+							)}
+						</div>
+					);
+				})}
+			</div>
+		);
+	})}
+</div>
+
+<style>
+	.board {
+		display: grid;
+		grid-template-columns: 180px repeat(5, 1fr);
+		gap: 1px;
+		background: var(--border);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		overflow: hidden;
+	}
+	.board-header {
+		display: contents;
+	}
+	.board-row {
+		display: contents;
+	}
+	.col-header {
+		background: var(--bg);
+		padding: var(--space-sm) var(--space-md);
+		font-weight: 600;
+		font-size: var(--font-size-sm);
+		text-align: center;
+	}
+	.swimlane-label {
+		background: var(--bg);
+		padding: var(--space-sm) var(--space-md);
+		font-weight: 600;
+		font-size: var(--font-size-sm);
+		display: flex;
+		align-items: flex-start;
+		gap: var(--space-xs);
+	}
+	.swimlane-count {
+		color: var(--text-muted);
+		font-weight: 400;
+	}
+	.swimlane-review-badge {
+		background: var(--color-needs-review);
+		color: white;
+		font-size: 0.65rem;
+		font-weight: 700;
+		padding: 0 0.3rem;
+		border-radius: 999px;
+	}
+	.board-cell {
+		background: var(--card-bg);
+		padding: var(--space-sm);
+		min-height: 60px;
+	}
+	.empty-cell {
+		color: var(--text-muted);
+		font-size: var(--font-size-sm);
+	}
+</style>
