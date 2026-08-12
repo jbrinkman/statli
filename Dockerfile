@@ -1,3 +1,19 @@
+# Multi-target Dockerfile: builds TWO images from a single build context.
+#
+# Targets:
+#   app  — Astro SSR dashboard + API (port 4321)
+#   mcp  — MCP server with streamable HTTP transport (port 4322)
+#
+# Both targets share the same dependency install and build stages, ensuring
+# they always use the same package versions and compiled artifacts. Building
+# them from one Dockerfile prevents version drift between the API server and
+# the MCP tools that call it.
+#
+# Usage:
+#   docker build --target app -t statli .
+#   docker build --target mcp -t statli-mcp .
+#   docker compose up --build            (builds both via docker-compose.yml)
+
 # Stage 1: Dependencies
 FROM node:24-alpine AS deps
 RUN apk add --no-cache python3 make g++
