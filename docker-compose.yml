@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      target: app
     ports:
       - "127.0.0.1:4321:4321"
     environment:
@@ -17,7 +17,7 @@ services:
   mcp:
     build:
       context: .
-      dockerfile: Dockerfile.mcp
+      target: mcp
     ports:
       - "127.0.0.1:4322:4322"
     environment:
