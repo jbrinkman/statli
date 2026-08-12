@@ -137,6 +137,29 @@ npm run seed -- --report-path path/to/status-report.md
 npm run validate:sources   # compare against Confluence (requires atlas CLI)
 ```
 
+## Report Generation
+
+```bash
+npm run report:generate                          # stdout, last 7 days
+npm run report:generate -- --since 2026-08-01    # custom date range
+npm run report:generate -- --output report.md    # write to file
+```
+
+## Daily Cron
+
+An automated KiroCrew cron job runs at 8am ET to:
+- Check submitted PRs for merges/closures (via `gh` CLI)
+- Detect releases for merged projects
+- Auto-promote `merge_is_complete` projects
+- Flag ambiguous situations for human review
+
+**Prerequisites:** `gh` CLI authenticated (`gh auth login`), Statli server running, MCP server registered.
+
+Registration (via KiroCrew):
+```
+cron_add(name: "statli-daily-update", at_time: "8am", message: "Run the Statli daily update. Read ~/projects/statli/cron/daily-update.md and follow its instructions using the statli MCP tools and gh CLI.")
+```
+
 ## Architecture
 
 Astro SSR application serving a dashboard UI and API routes, backed by SQLite. Single process — no separate backend service.
