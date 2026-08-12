@@ -96,7 +96,7 @@ docker run --rm -p 127.0.0.1:4321:4321 statli
 
 ## MCP Server
 
-The project includes an MCP (Model Context Protocol) server for AI agent integration.
+The project includes an MCP (Model Context Protocol) server for AI agent integration. It uses the **streamable HTTP transport** and listens on port 4322 by default.
 
 ### Build & Run
 
@@ -105,30 +105,28 @@ npm run build:mcp             # Compile TypeScript
 STATLI_API_KEY=<key> STATLI_API_URL=http://127.0.0.1:4321 npm run start:mcp
 ```
 
+The MCP endpoint is available at `http://127.0.0.1:4322/mcp`.
+
 ### KiroCrew Registration
 
 Add to `~/.kiro/crew/mcp.json`:
 ```json
 {
   "statli": {
-    "command": "node",
-    "args": ["dist/mcp-server/index.js"],
-    "cwd": "~/projects/statli",
-    "env": {
-      "STATLI_API_KEY": "${STATLI_API_KEY}",
-      "STATLI_API_URL": "http://127.0.0.1:4321"
-    }
+    "url": "http://127.0.0.1:4322/mcp"
   }
 }
 ```
 
-### Available Tools (11)
+### Available Tools (12)
 
 **Project management:** `list_projects`, `get_project`, `create_project`, `update_project`, `delete_project`, `lock_project`, `unlock_project`
 
 **Review items:** `list_review_items`, `add_review_item`, `resolve_review_item`
 
 **History:** `get_change_history`
+
+**Reports:** `generate_report`
 
 ## Data Seeding
 
