@@ -4,6 +4,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprot
 import { StatliClient } from "./client.js";
 import { getHistoryToolDefinitions } from "./tools/history.js";
 import { getProjectToolDefinitions } from "./tools/projects.js";
+import { getReportToolDefinitions } from "./tools/reports.js";
 import { getReviewToolDefinitions } from "./tools/reviews.js";
 
 const apiUrl = process.env.STATLI_API_URL || "http://127.0.0.1:4321";
@@ -31,6 +32,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 			...getProjectToolDefinitions(),
 			...getReviewToolDefinitions(),
 			...getHistoryToolDefinitions(),
+			...getReportToolDefinitions(),
 		],
 	};
 });

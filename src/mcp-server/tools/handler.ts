@@ -87,6 +87,12 @@ export async function handleToolCall(
 		case "get_change_history":
 			return await handleGetChangeHistory(client, args);
 
+		// Report tool
+		case "generate_report": {
+			const { handleGenerateReport } = await import("./reports.js");
+			return await handleGenerateReport(client, args);
+		}
+
 		default:
 			throw new Error(`Unknown tool: ${name}`);
 	}

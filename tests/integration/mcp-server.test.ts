@@ -1,16 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { getHistoryToolDefinitions } from "../../src/mcp-server/tools/history.js";
 import { getProjectToolDefinitions } from "../../src/mcp-server/tools/projects.js";
+import { getReportToolDefinitions } from "../../src/mcp-server/tools/reports.js";
 import { getReviewToolDefinitions } from "../../src/mcp-server/tools/reviews.js";
 
 describe("MCP tool listing", () => {
-	it("exposes all 11 tools", () => {
+	it("exposes all 12 tools", () => {
 		const allTools = [
 			...getProjectToolDefinitions(),
 			...getReviewToolDefinitions(),
 			...getHistoryToolDefinitions(),
+			...getReportToolDefinitions(),
 		];
-		expect(allTools).toHaveLength(11);
+		expect(allTools).toHaveLength(12);
 	});
 
 	it("project tools have correct names", () => {
