@@ -10,6 +10,7 @@ import { getReviewToolDefinitions } from "./tools/reviews.js";
 
 const apiUrl = process.env.STATLI_API_URL || "http://127.0.0.1:4321";
 const apiKey = process.env.STATLI_API_KEY;
+const mcpHost = process.env.MCP_HOST || "0.0.0.0";
 const mcpPort = Number(process.env.MCP_PORT || "4322");
 
 if (!apiKey) {
@@ -72,6 +73,6 @@ const httpServer = createServer(async (req, res) => {
 	}
 });
 
-httpServer.listen(mcpPort, "127.0.0.1", () => {
-	console.log(`Statli MCP server listening on http://127.0.0.1:${mcpPort}/mcp`);
+httpServer.listen(mcpPort, mcpHost, () => {
+	console.log(`Statli MCP server listening on http://${mcpHost}:${mcpPort}/mcp`);
 });
