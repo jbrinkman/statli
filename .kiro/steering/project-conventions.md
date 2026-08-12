@@ -29,6 +29,7 @@ inclusion: always
 - Line width: 100 characters
 - Rules: `noNonNullAssertion` (error), `noExplicitAny` (error)
 - All files must pass `npm run lint` before commit
+- CSS: vanilla CSS with custom properties (no Tailwind), design tokens in `src/styles/global.css`
 
 ## Architecture
 
