@@ -5,6 +5,13 @@ node_modules/
 dist/
 .astro/
 
+# TypeScript build output (MCP server)
+src/**/*.js
+src/**/*.d.ts
+scripts/**/*.js
+scripts/**/*.d.ts
+!src/env.d.ts
+
 # Environment
 .env
 .env.*
@@ -16,6 +23,7 @@ dist/
 data/*.db
 data/*.db-journal
 data/*.db-wal
+data/*.db-shm
 
 # Test output
 coverage/

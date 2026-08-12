@@ -10,8 +10,7 @@ export function getReportToolDefinitions() {
 				properties: {
 					since: {
 						type: "string",
-						description:
-							"ISO date — report covers changes since this date (default: 7 days ago)",
+						description: "ISO date — report covers changes since this date (default: 7 days ago)",
 					},
 				},
 			},
@@ -39,10 +38,7 @@ interface HistoryEntry {
 	[key: string]: unknown;
 }
 
-export async function handleGenerateReport(
-	client: StatliClient,
-	args: Record<string, unknown>,
-) {
+export async function handleGenerateReport(client: StatliClient, args: Record<string, unknown>) {
 	const since =
 		(args.since as string) || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
