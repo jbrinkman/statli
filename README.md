@@ -94,6 +94,17 @@ docker build -t statli .
 docker run --rm -p 127.0.0.1:4321:4321 statli
 ```
 
+Or run both services (app + MCP server) together:
+
+```bash
+cp .env.example .env  # edit with real secrets
+docker compose up --build
+```
+
+This starts:
+- **App** at `http://127.0.0.1:4321` (dashboard + API)
+- **MCP** at `http://127.0.0.1:4322/mcp` (agent tools)
+
 ## MCP Server
 
 The project includes an MCP (Model Context Protocol) server for AI agent integration. It uses the **streamable HTTP transport** and listens on port 4322 by default.

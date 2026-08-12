@@ -1,8 +1,31 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "127.0.0.1:4321:4321"
     environment:
       - HOST=0.0.0.0
       - PORT=4321
+      - DATABASE_URL=/data/statli.db
+      - AUTH_SECRET=${AUTH_SECRET}
+      - STATLI_API_KEY=${STATLI_API_KEY}
+    volumes:
+      - statli-data:/data
+
+  mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    ports:
+      - "127.0.0.1:4322:4322"
+    environment:
+      - MCP_PORT=4322
+      - STATLI_API_URL=http://app:4321
+      - STATLI_API_KEY=${STATLI_API_KEY}
+    depends_on:
+      - app
+
+volumes:
+  statli-data:
