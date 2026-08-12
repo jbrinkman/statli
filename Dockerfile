@@ -10,9 +10,7 @@
 # the MCP tools that call it.
 #
 # Usage:
-#   docker build --target app -t statli .
-#   docker build --target mcp -t statli-mcp .
-#   docker compose up --build            (builds both via docker-compose.yml)
+#   docker compose up --build
 
 # Stage 1: Dependencies
 FROM node:24-alpine AS deps
