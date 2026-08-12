@@ -9,11 +9,10 @@ import { fetchProjects, fetchHistory } from "../lib/api-client.js";
 let session;
 try {
 	session = await auth.api.getSession({ headers: Astro.request.headers });
+	if (!session?.user) {
+		return Astro.redirect("/login");
+	}
 } catch {
-	return Astro.redirect("/login");
-}
-
-if (!session?.user) {
 	return Astro.redirect("/login");
 }
 

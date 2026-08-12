@@ -1,17 +1,4 @@
 ---
-import { auth } from "../lib/auth.js";
-
-let isAuthenticated = false;
-try {
-	const session = await auth.api.getSession({ headers: Astro.request.headers });
-	isAuthenticated = !!session?.user;
-} catch {
-	// Auth not configured or failed — treat as unauthenticated
-}
-
-if (isAuthenticated) {
-	return Astro.redirect("/dashboard");
-}
-
+// Simple redirect - check auth on the dashboard page itself
 return Astro.redirect("/login");
 ---
