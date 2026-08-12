@@ -12,7 +12,7 @@ services:
       - AUTH_SECRET=${AUTH_SECRET}
       - STATLI_API_KEY=${STATLI_API_KEY}
     volumes:
-      - statli-data:/data
+      - ./data:/data
 
   mcp:
     build:
@@ -26,6 +26,3 @@ services:
       - STATLI_API_KEY=${STATLI_API_KEY}
     depends_on:
       - app
-
-volumes:
-  statli-data:
