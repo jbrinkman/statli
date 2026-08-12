@@ -36,9 +36,56 @@ export function getAuth() {
 	}
 
 	const dbPath = process.env.DATABASE_URL || "./data/statli.db";
+	const db = new Database(dbPath);
+
+	// Ensure Better Auth tables exist
+	db.exec(`
+		CREATE TABLE IF NOT EXISTS user (
+			id TEXT PRIMARY KEY,
+			name TEXT,
+			email TEXT NOT NULL UNIQUE,
+			emailVerified INTEGER NOT NULL DEFAULT 0,
+			image TEXT,
+			createdAt TEXT NOT NULL,
+			updatedAt TEXT NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS session (
+			id TEXT PRIMARY KEY,
+			expiresAt TEXT NOT NULL,
+			token TEXT NOT NULL UNIQUE,
+			ipAddress TEXT,
+			userAgent TEXT,
+			userId TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+			createdAt TEXT NOT NULL,
+			updatedAt TEXT NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS account (
+			id TEXT PRIMARY KEY,
+			accountId TEXT NOT NULL,
+			providerId TEXT NOT NULL,
+			userId TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+			accessToken TEXT,
+			refreshToken TEXT,
+			idToken TEXT,
+			accessTokenExpiresAt TEXT,
+			refreshTokenExpiresAt TEXT,
+			scope TEXT,
+			password TEXT,
+			createdAt TEXT NOT NULL,
+			updatedAt TEXT NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS verification (
+			id TEXT PRIMARY KEY,
+			identifier TEXT NOT NULL,
+			value TEXT NOT NULL,
+			expiresAt TEXT NOT NULL,
+			createdAt TEXT,
+			updatedAt TEXT
+		);
+	`);
 
 	authInstance = betterAuth({
-		database: new Database(dbPath),
+		database: db,
 		secret: authSecret,
 		emailAndPassword: { enabled: true },
 	});
