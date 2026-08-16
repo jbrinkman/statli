@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
+import { hashPassword } from "better-auth/crypto";
 import Database from "better-sqlite3";
-import { auth } from "../../../lib/auth.js";
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
@@ -20,12 +20,11 @@ export const POST: APIRoute = async ({ request }) => {
 			);
 		}
 
-		// Get the database from the auth instance to check user exists
 		const dbPath = process.env.DATABASE_URL || "./data/statli.db";
 		const db = new Database(dbPath);
 
-		const user = db.prepare("SELECT id, email FROM user WHERE email = ?").get(email) as
-			| { id: string; email: string }
+		const user = db.prepare("SELECT id FROM user WHERE email = ?").get(email) as
+			| { id: string }
 			| undefined;
 
 		if (!user) {
@@ -36,33 +35,30 @@ export const POST: APIRoute = async ({ request }) => {
 			);
 		}
 
-		// Delete existing credential and sessions, then re-register
-		db.prepare("DELETE FROM account WHERE userId = ? AND providerId = 'credential'").run(user.id);
+		// Hash the new password using Better Auth's own hashing
+		const hashedPassword = await hashPassword(password);
+
+		// Update the credential account's password in place (preserves user ID)
+		const result = db
+			.prepare("UPDATE account SET password = ? WHERE userId = ? AND providerId = 'credential'")
+			.run(hashedPassword, user.id);
+
+		// Clear existing sessions so user must log in with new password
 		db.prepare("DELETE FROM session WHERE userId = ?").run(user.id);
-		db.prepare("DELETE FROM user WHERE id = ?").run(user.id);
+
 		db.close();
 
-		// Re-register through Better Auth (creates fresh user with hashed password)
-		const response = await auth.handler(
-			new Request("http://localhost/api/auth/sign-up/email", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email, password, name: email.split("@")[0] }),
-			}),
-		);
-
-		if (response.ok) {
-			return new Response(JSON.stringify({ data: { message: "Password reset successfully" } }), {
-				status: 200,
-				headers: { "Content-Type": "application/json" },
-			});
+		if (result.changes === 0) {
+			return new Response(
+				JSON.stringify({ error: { message: "No credential account found for this user" } }),
+				{ status: 404, headers: { "Content-Type": "application/json" } },
+			);
 		}
 
-		const body = await response.json().catch(() => ({}));
-		return new Response(
-			JSON.stringify({ error: { message: "Failed to reset password", details: body } }),
-			{ status: 500, headers: { "Content-Type": "application/json" } },
-		);
+		return new Response(JSON.stringify({ data: { message: "Password reset successfully" } }), {
+			status: 200,
+			headers: { "Content-Type": "application/json" },
+		});
 	} catch (error) {
 		return new Response(JSON.stringify({ error: { message: (error as Error).message } }), {
 			status: 500,

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
-import { betterAuth } from "better-auth";
+import { hashPassword } from "better-auth/crypto";
 
 // Load .env
 const envPath = path.resolve(process.cwd(), ".env");
@@ -32,16 +32,9 @@ if (newPassword.length < 8) {
 
 const dbPath = process.env.DATABASE_URL || "./data/statli.db";
 const db = new Database(dbPath);
-const auth = betterAuth({
-	database: db,
-	secret: process.env.AUTH_SECRET || "",
-	emailAndPassword: { enabled: true },
-	basePath: "/api/auth",
-});
 
-// Check user exists
-const user = db.prepare("SELECT id, email FROM user WHERE email = ?").get(email) as
-	| { id: string; email: string }
+const user = db.prepare("SELECT id FROM user WHERE email = ?").get(email) as
+	| { id: string }
 	| undefined;
 
 if (!user) {
@@ -50,26 +43,12 @@ if (!user) {
 	process.exit(1);
 }
 
-// Delete existing credential account entry, then sign up fresh (preserves user ID)
-db.prepare("DELETE FROM account WHERE userId = ? AND providerId = 'credential'").run(user.id);
-db.prepare("DELETE FROM session WHERE userId = ?").run(user.id);
-db.prepare("DELETE FROM user WHERE id = ?").run(user.id);
-
-// Re-register through Better Auth API (creates new user with same email)
-const response = await auth.handler(
-	new Request("http://localhost/api/auth/sign-up/email", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ email, password: newPassword, name: email.split("@")[0] }),
-	}),
+const hashed = await hashPassword(newPassword);
+db.prepare("UPDATE account SET password = ? WHERE userId = ? AND providerId = 'credential'").run(
+	hashed,
+	user.id,
 );
+db.prepare("DELETE FROM session WHERE userId = ?").run(user.id);
 
-if (response.ok) {
-	console.log(`Password reset successfully for ${email}`);
-	console.log("You can now log in with your new password.");
-} else {
-	const body = await response.json().catch(() => ({}));
-	console.error("Failed to reset password:", JSON.stringify(body));
-}
-
+console.log(`Password reset successfully for ${email}`);
 db.close();
