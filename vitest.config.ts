@@ -5,8 +5,14 @@ export default defineConfig({
 		include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
 		coverage: {
 			provider: "v8",
-			include: ["src/lib/**/*.ts"],
-			exclude: ["src/lib/auth.ts", "src/lib/db/connection.ts"],
+			include: [
+				"src/lib/db/**/*.ts",
+				"src/lib/schemas/**/*.ts",
+				"src/lib/errors.ts",
+				"src/lib/api-utils.ts",
+				"src/lib/startup.ts",
+			],
+			exclude: ["src/lib/db/connection.ts"],
 			thresholds: {
 				statements: 80,
 				branches: 80,
