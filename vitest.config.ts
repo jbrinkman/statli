@@ -11,6 +11,8 @@ export default defineConfig({
 				"src/lib/errors.ts",
 				"src/lib/api-utils.ts",
 				"src/lib/startup.ts",
+				"src/lib/auth.ts",
+				"src/lib/api-client.ts",
 			],
 			exclude: ["src/lib/db/connection.ts"],
 			thresholds: {
