@@ -64,6 +64,19 @@ All `/api/*` routes (except `/api/auth/*`) require authentication.
 
 Password reset emails are delivered through [Resend](https://resend.com). Configure `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (must match a verified Resend domain).
 
+### Resend Setup
+
+1. Create a free account at [resend.com](https://resend.com) (3,000 emails/month free tier)
+2. Add and verify a domain in the Resend dashboard (Settings > Domains)
+3. Create an API key (Settings > API Keys)
+4. Set the environment variables:
+   ```bash
+   RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx
+   RESEND_FROM_EMAIL=noreply@yourdomain.com
+   ```
+
+The `RESEND_FROM_EMAIL` address must use your verified domain. The app will fail to start if these variables are missing.
+
 ## API
 
 | Method | Endpoint | Description |
