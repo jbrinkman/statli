@@ -1,0 +1,145 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import { auth } from "../../lib/auth.js";
+
+let session;
+try {
+	session = await auth.api.getSession({ headers: Astro.request.headers });
+	if (!session?.user) {
+		return Astro.redirect("/login");
+	}
+} catch {
+	return Astro.redirect("/login");
+}
+---
+
+<Layout title="Settings">
+	<Header email={session.user.email} totalReviewItems={0} />
+	<main class="settings-main">
+		<h2>Settings</h2>
+		<section class="card">
+			<h3>Change Password</h3>
+			<form id="change-password-form">
+				<div class="field">
+					<label for="current">Current Password</label>
+					<input type="password" id="current" name="current" required autocomplete="current-password" />
+				</div>
+				<div class="field">
+					<label for="newpass">New Password</label>
+					<input type="password" id="newpass" name="newpass" required minlength="8" autocomplete="new-password" />
+				</div>
+				<div class="field">
+					<label for="confirm">Confirm New Password</label>
+					<input type="password" id="confirm" name="confirm" required minlength="8" autocomplete="new-password" />
+				</div>
+				<div id="error" class="error" hidden></div>
+				<div id="success" class="success" hidden></div>
+				<button type="submit">Change Password</button>
+			</form>
+		</section>
+		<p class="back-link"><a href="/dashboard">Back to dashboard</a></p>
+	</main>
+</Layout>
+
+<style>
+	.settings-main {
+		max-width: 500px;
+		margin: var(--space-xl) auto;
+		padding: 0 var(--space-lg);
+	}
+	h2 {
+		margin-bottom: var(--space-lg);
+	}
+	.card {
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		padding: var(--space-xl);
+	}
+	h3 {
+		margin-bottom: var(--space-md);
+		font-size: var(--font-size-lg);
+	}
+	.field {
+		margin-bottom: var(--space-md);
+	}
+	label {
+		display: block;
+		margin-bottom: var(--space-xs);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+	}
+	input {
+		width: 100%;
+		padding: var(--space-sm) var(--space-md);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		font-size: var(--font-size-base);
+	}
+	button {
+		padding: var(--space-sm) var(--space-lg);
+		background: var(--color-in-progress);
+		color: white;
+		border: none;
+		border-radius: var(--border-radius);
+		font-weight: 500;
+		margin-top: var(--space-md);
+	}
+	button:hover {
+		opacity: 0.9;
+	}
+	.error {
+		color: var(--color-needs-review);
+		font-size: var(--font-size-sm);
+		margin-top: var(--space-sm);
+	}
+	.success {
+		color: var(--color-completed);
+		font-size: var(--font-size-sm);
+		margin-top: var(--space-sm);
+	}
+	.back-link {
+		margin-top: var(--space-lg);
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+	}
+</style>
+
+<script>
+	const form = document.getElementById("change-password-form") as HTMLFormElement;
+	const errorEl = document.getElementById("error") as HTMLDivElement;
+	const successEl = document.getElementById("success") as HTMLDivElement;
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		errorEl.hidden = true;
+		successEl.hidden = true;
+
+		const current = (form.querySelector("#current") as HTMLInputElement).value;
+		const newpass = (form.querySelector("#newpass") as HTMLInputElement).value;
+		const confirm = (form.querySelector("#confirm") as HTMLInputElement).value;
+
+		if (newpass !== confirm) {
+			errorEl.textContent = "New passwords do not match";
+			errorEl.hidden = false;
+			return;
+		}
+
+		const res = await fetch("/api/auth/change-password", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ currentPassword: current, newPassword: newpass, revokeOtherSessions: true }),
+		});
+
+		if (res.ok) {
+			successEl.textContent = "Password changed successfully.";
+			successEl.hidden = false;
+			form.reset();
+		} else {
+			const data = await res.json().catch(() => ({}));
+			errorEl.textContent = data.message || "Current password is incorrect";
+			errorEl.hidden = false;
+		}
+	});
+</script>

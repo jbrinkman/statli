@@ -18,6 +18,7 @@ const { email, totalReviewItems } = Astro.props;
 	</div>
 	<div class="header-right">
 		{email && <span class="user-email">{email}</span>}
+		<a href="/dashboard/settings" class="settings-link">Settings</a>
 		<form method="POST" action="/api/auth/sign-out" id="logout-form">
 			<button type="submit" class="logout-btn">Logout</button>
 		</form>

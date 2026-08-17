@@ -1,10 +1,9 @@
 import { betterAuth } from "better-auth";
-import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { getMigrations } from "better-auth/db/migration";
 import Database from "better-sqlite3";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-describe("password reset", () => {
+describe("password reset flow", () => {
 	let db: InstanceType<typeof Database>;
 	let auth: ReturnType<typeof betterAuth>;
 
@@ -13,21 +12,26 @@ describe("password reset", () => {
 		auth = betterAuth({
 			database: db,
 			secret: "a-test-secret-that-is-at-least-32-chars-long",
-			emailAndPassword: { enabled: true },
+			emailAndPassword: {
+				enabled: true,
+				sendResetPassword: () => {
+					// No-op in tests (no actual email sent)
+				},
+			},
 			basePath: "/api/auth",
 		});
 
 		const { runMigrations } = await getMigrations({ ...auth.options, database: db });
 		await runMigrations();
 
-		// Create a test user
+		// Create test user
 		await auth.handler(
 			new Request("http://localhost/api/auth/sign-up/email", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					email: "test@example.com",
-					password: "originalpassword123",
+					password: "originalpass123",
 					name: "Test",
 				}),
 			}),
@@ -38,69 +42,117 @@ describe("password reset", () => {
 		db.close();
 	});
 
-	it("hashPassword produces a valid hash", async () => {
-		const hash = await hashPassword("mypassword123");
-		expect(hash).toBeDefined();
-		expect(hash.length).toBeGreaterThan(20);
+	it("sendResetPassword hook is configured", () => {
+		expect(auth.options.emailAndPassword?.sendResetPassword).toBeDefined();
 	});
 
-	it("verifyPassword validates against hash", async () => {
-		const hash = await hashPassword("testpass12345");
-		const valid = await verifyPassword({ password: "testpass12345", hash });
-		expect(valid).toBe(true);
+	it("forgetPassword endpoint accepts a request", async () => {
+		const res = await auth.handler(
+			new Request("http://localhost/api/auth/request-password-reset", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					email: "test@example.com",
+					redirectTo: "/reset-password",
+				}),
+			}),
+		);
+		// Should succeed (200) even if email doesn't send in test
+		expect(res.status).toBe(200);
 	});
 
-	it("verifyPassword rejects wrong password", async () => {
-		const hash = await hashPassword("correctpassword");
-		const valid = await verifyPassword({ password: "wrongpassword", hash });
-		expect(valid).toBe(false);
+	it("resetPassword endpoint rejects invalid token", async () => {
+		const res = await auth.handler(
+			new Request("http://localhost/api/auth/reset-password", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					token: "invalid-token-that-doesnt-exist",
+					newPassword: "newpass12345",
+				}),
+			}),
+		);
+		expect(res.status).toBeGreaterThanOrEqual(400);
 	});
 
-	it("password can be updated in place and user can sign in with new password", async () => {
-		// Get user ID
-		const user = db.prepare("SELECT id FROM user WHERE email = ?").get("test@example.com") as {
-			id: string;
-		};
-		expect(user).toBeDefined();
+	it("changePassword requires authentication", async () => {
+		const res = await auth.handler(
+			new Request("http://localhost/api/auth/change-password", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					currentPassword: "originalpass123",
+					newPassword: "newpass12345",
+				}),
+			}),
+		);
+		// No session cookie, should be unauthorized
+		expect(res.status).toBeGreaterThanOrEqual(400);
+	});
 
-		// Hash new password and update
-		const newHash = await hashPassword("newpassword456");
-		db.prepare(
-			"UPDATE account SET password = ? WHERE userId = ? AND providerId = 'credential'",
-		).run(newHash, user.id);
-
-		// Verify old password no longer works
-		const oldAttempt = await auth.handler(
+	it("changePassword rejects wrong current password (with session)", async () => {
+		// Sign in to get session
+		const signIn = await auth.handler(
 			new Request("http://localhost/api/auth/sign-in/email", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email: "test@example.com", password: "originalpassword123" }),
+				body: JSON.stringify({ email: "test@example.com", password: "originalpass123" }),
 			}),
 		);
-		expect(oldAttempt.status).toBe(401);
+		const cookies = signIn.headers.getSetCookie();
+		const cookieHeader = cookies.join("; ");
+
+		const res = await auth.handler(
+			new Request("http://localhost/api/auth/change-password", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: cookieHeader,
+				},
+				body: JSON.stringify({
+					currentPassword: "wrongpassword",
+					newPassword: "newpass12345",
+				}),
+			}),
+		);
+		expect(res.status).toBeGreaterThanOrEqual(400);
+	});
+
+	it("changePassword succeeds with correct current password", async () => {
+		// Sign in to get session
+		const signIn = await auth.handler(
+			new Request("http://localhost/api/auth/sign-in/email", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email: "test@example.com", password: "originalpass123" }),
+			}),
+		);
+		const cookies = signIn.headers.getSetCookie();
+		const cookieHeader = cookies.join("; ");
+
+		const res = await auth.handler(
+			new Request("http://localhost/api/auth/change-password", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: cookieHeader,
+				},
+				body: JSON.stringify({
+					currentPassword: "originalpass123",
+					newPassword: "updatedpass456",
+				}),
+			}),
+		);
+		expect(res.status).toBe(200);
 
 		// Verify new password works
-		const newAttempt = await auth.handler(
+		const loginWithNew = await auth.handler(
 			new Request("http://localhost/api/auth/sign-in/email", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email: "test@example.com", password: "newpassword456" }),
+				body: JSON.stringify({ email: "test@example.com", password: "updatedpass456" }),
 			}),
 		);
-		expect(newAttempt.status).toBe(200);
-	});
-
-	it("user ID is preserved after password update", async () => {
-		const userBefore = db
-			.prepare("SELECT id FROM user WHERE email = ?")
-			.get("test@example.com") as { id: string };
-		const newHash = await hashPassword("anotherpassword789");
-		db.prepare(
-			"UPDATE account SET password = ? WHERE userId = ? AND providerId = 'credential'",
-		).run(newHash, userBefore.id);
-		const userAfter = db.prepare("SELECT id FROM user WHERE email = ?").get("test@example.com") as {
-			id: string;
-		};
-		expect(userAfter.id).toBe(userBefore.id);
+		expect(loginWithNew.status).toBe(200);
 	});
 });

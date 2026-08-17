@@ -27,6 +27,8 @@ Open http://localhost:4321.
 | `DATABASE_URL` | No | SQLite path (default: `./data/statli.db`) |
 | `AUTH_SECRET` | **Yes** | Better Auth secret, min 32 chars |
 | `STATLI_API_KEY` | No | API key for machine clients (MCP, cron) |
+| `RESEND_API_KEY` | **Yes** | Resend API key for transactional email |
+| `RESEND_FROM_EMAIL` | **Yes** | Sender email (must match Resend verified domain) |
 
 Generate secrets:
 ```bash
@@ -59,6 +61,8 @@ Dual auth scheme:
 - **Machine clients**: Bearer API key via `Authorization: Bearer <STATLI_API_KEY>`
 
 All `/api/*` routes (except `/api/auth/*`) require authentication.
+
+Password reset emails are delivered through [Resend](https://resend.com). Configure `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (must match a verified Resend domain).
 
 ## API
 

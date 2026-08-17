@@ -3,6 +3,8 @@ import path from "node:path";
 import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
 
+import { Resend } from "resend";
+
 // Load .env manually if process.env doesn't have our vars
 // (Astro/Vite doesn't always populate process.env in SSR)
 function loadEnvFile() {
@@ -87,7 +89,19 @@ export function getAuth() {
 	authInstance = betterAuth({
 		database: db,
 		secret: authSecret,
-		emailAndPassword: { enabled: true },
+		emailAndPassword: {
+			enabled: true,
+			sendResetPassword: ({ user, url }) => {
+				const resend = new Resend(process.env.RESEND_API_KEY);
+				void resend.emails.send({
+					from: process.env.RESEND_FROM_EMAIL || "noreply@localhost",
+					to: user.email,
+					subject: "Reset your Statli password",
+					html: `<p>Click <a href="${url}">here</a> to reset your password.</p><p>This link expires in 1 hour. If you didn't request this, ignore this email.</p>`,
+				});
+			},
+			revokeSessionsOnPasswordReset: true,
+		},
 	});
 
 	return authInstance;
