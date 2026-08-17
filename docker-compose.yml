@@ -11,6 +11,9 @@ services:
       - DATABASE_URL=/data/statli.db
       - AUTH_SECRET=${AUTH_SECRET}
       - STATLI_API_KEY=${STATLI_API_KEY}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RESEND_FROM_EMAIL=${RESEND_FROM_EMAIL}
+      - BETTER_AUTH_URL=http://localhost:4321
     volumes:
       - ./data:/data
 
