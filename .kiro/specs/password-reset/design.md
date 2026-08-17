@@ -65,7 +65,7 @@ Key: `void` before the send (fire-and-forget) so response time doesn't reveal ac
 ### /forgot-password (public)
 
 - Form: email input + submit button
-- On submit: `POST /api/auth/forget-password` (Better Auth's built-in endpoint)
+- On submit: `POST /api/auth/request-password-reset` (Better Auth's built-in endpoint)
 - Always shows: "If an account exists with that email, you'll receive a reset link."
 
 ### /reset-password?token=xxx (public)

@@ -14,7 +14,7 @@
 
 - [ ] Install: `npm install resend`
 - [ ] Add to `.env.example`:
-  ```
+  ```bash
   RESEND_API_KEY=re_your_api_key_here
   RESEND_FROM_EMAIL=noreply@yourdomain.com
   ```
@@ -46,7 +46,7 @@
 - [ ] Create `src/pages/forgot-password.astro`:
   - Uses AuthLayout
   - Form with single email input + submit button
-  - On submit: `POST /api/auth/forget-password` with `{ email, redirectTo: "/reset-password" }`
+  - On submit: `POST /api/auth/request-password-reset` with `{ email, redirectTo: "/reset-password" }`
   - On response (success or failure): always show "If an account exists with that email, you'll receive a reset link shortly."
   - Link back to `/login`
 - [ ] Verify: `npm run build` succeeds

@@ -62,6 +62,8 @@ Dual auth scheme:
 
 All `/api/*` routes (except `/api/auth/*`) require authentication.
 
+Password reset emails are delivered through [Resend](https://resend.com). Configure `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (must match a verified Resend domain).
+
 ## API
 
 | Method | Endpoint | Description |

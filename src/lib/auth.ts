@@ -100,6 +100,7 @@ export function getAuth() {
 					html: `<p>Click <a href="${url}">here</a> to reset your password.</p><p>This link expires in 1 hour. If you didn't request this, ignore this email.</p>`,
 				});
 			},
+			revokeSessionsOnPasswordReset: true,
 		},
 	});
 
