@@ -34,7 +34,9 @@ describe("startup validation", () => {
 
 	it("throws when RESEND_FROM_EMAIL is missing", () => {
 		process.env.RESEND_FROM_EMAIL = undefined;
-		expect(() => validateEnvironment()).toThrow("RESEND_FROM_EMAIL environment variable is required");
+		expect(() => validateEnvironment()).toThrow(
+			"RESEND_FROM_EMAIL environment variable is required",
+		);
 	});
 
 	it("passes with all required vars set", () => {
@@ -45,9 +47,7 @@ describe("startup validation", () => {
 		process.env.STATLI_API_KEY = undefined;
 		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 		validateEnvironment();
-		expect(warnSpy).toHaveBeenCalledWith(
-			"STATLI_API_KEY not set: API key authentication disabled",
-		);
+		expect(warnSpy).toHaveBeenCalledWith("STATLI_API_KEY not set: API key authentication disabled");
 		warnSpy.mockRestore();
 	});
 });
